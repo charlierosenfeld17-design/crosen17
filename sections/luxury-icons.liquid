@@ -6,33 +6,24 @@
 {% style %}
   @keyframes ai-radiate-{{ ai_gen_id }} {
     0% {
-      opacity: 0.4;
-      transform: scale(0.92);
-      filter: drop-shadow(0 0 0px {{ block.settings.icon_color }});
+      opacity: 0.6;
     }
     50% {
       opacity: 1;
-      transform: scale(1);
-      filter: drop-shadow(0 0 {{ block.settings.radiate_intensity }}px {{ block.settings.icon_color }});
     }
     100% {
-      opacity: 0.4;
-      transform: scale(0.92);
-      filter: drop-shadow(0 0 0px {{ block.settings.icon_color }});
+      opacity: 0.6;
     }
   }
   @keyframes ai-radiate-text-{{ ai_gen_id }} {
     0% {
-      opacity: 0.5;
-      text-shadow: 0 0 0px transparent;
+      opacity: 0.65;
     }
     50% {
       opacity: 1;
-      text-shadow: 0 0 {{ block.settings.radiate_intensity }}px {{ block.settings.text_color }};
     }
     100% {
-      opacity: 0.5;
-      text-shadow: 0 0 0px transparent;
+      opacity: 0.65;
     }
   }
   .ai-luxury-icons-{{ ai_gen_id }} {
@@ -107,9 +98,6 @@
     .ai-luxury-icon-subtext-{{ ai_gen_id }} {
       animation: none;
       opacity: 1;
-      transform: scale(1);
-      filter: none;
-      text-shadow: none;
     }
   }
   @media screen and (max-width: 749px) {
@@ -283,22 +271,12 @@
     {
       "type": "range",
       "id": "radiate_speed",
-      "label": "Radiate speed (seconds)",
-      "min": 2,
-      "max": 10,
+      "label": "Breathing speed (seconds)",
+      "min": 3,
+      "max": 12,
       "step": 1,
       "unit": "s",
-      "default": 4
-    },
-    {
-      "type": "range",
-      "id": "radiate_intensity",
-      "label": "Glow intensity",
-      "min": 2,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "default": 8
+      "default": 6
     },
     {
       "type": "header",
