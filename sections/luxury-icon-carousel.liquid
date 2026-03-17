@@ -1,0 +1,805 @@
+{% doc %}
+  @prompt
+    A horizontal rotating/looping carousel of luxury e-commerce icons with smooth infinite scroll animation. Icons are spread out with generous spacing. Aesthetic: Quiet luxury, sophisticated, architectural, premium. Subtext smaller under icon text, centered paragraph form. Fully customizable: icon spacing, color schemes, font sizes, animation speed, direction.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% style %}
+  .ai-lux-carousel-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background: {{ block.settings.background_color }};
+    overflow: hidden;
+    position: relative;
+  }
+  .ai-lux-carousel-{{ ai_gen_id }}::before,
+  .ai-lux-carousel-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: {{ block.settings.fade_width }}px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .ai-lux-carousel-{{ ai_gen_id }}::before {
+    left: 0;
+    background: linear-gradient(to right, {{ block.settings.background_color }}, {{ block.settings.background_color | color_modify: 'alpha', 0 }});
+  }
+  .ai-lux-carousel-{{ ai_gen_id }}::after {
+    right: 0;
+    background: linear-gradient(to left, {{ block.settings.background_color }}, {{ block.settings.background_color | color_modify: 'alpha', 0 }});
+  }
+  .ai-lux-track-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: {{ block.settings.icon_spacing }}px;
+    width: max-content;
+    animation: aiLuxScroll{{ ai_gen_id }} var(--ai-lux-duration-{{ ai_gen_id }}, 30s) linear infinite;
+    animation-direction: {{ block.settings.scroll_direction }};
+  }
+  .ai-lux-carousel-{{ ai_gen_id }}:hover .ai-lux-track-{{ ai_gen_id }} {
+    animation-play-state: {{ block.settings.pause_on_hover }};
+  }
+  @keyframes aiLuxScroll{{ ai_gen_id }} {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .ai-lux-item-{{ ai_gen_id }} {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: {{ block.settings.text_spacing }}px;
+    width: {{ block.settings.icon_max_width }}px;
+    min-width: {{ block.settings.icon_max_width }}px;
+    padding: 0 {{ block.settings.item_horizontal_padding }}px;
+  }
+  .ai-lux-icon-wrap-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .ai-lux-svg-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    stroke: {{ block.settings.icon_color }};
+    fill: none;
+    stroke-width: {{ block.settings.stroke_weight }};
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .ai-lux-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    color: {{ block.settings.text_color }};
+    text-align: center;
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+    text-transform: {{ block.settings.text_transform }};
+    font-weight: {{ block.settings.text_weight }};
+    line-height: {{ block.settings.text_line_height }};
+    margin: 0;
+    white-space: nowrap;
+  }
+  .ai-lux-subtext-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtext_size }}px;
+    color: {{ block.settings.subtext_color }};
+    text-align: center;
+    line-height: {{ block.settings.subtext_line_height }};
+    margin: 0;
+    padding: 0 {{ block.settings.subtext_padding }}px;
+    font-weight: {{ block.settings.subtext_weight }};
+    max-width: 100%;
+  }
+  .ai-lux-divider-{{ ai_gen_id }} {
+    flex: 0 0 auto;
+    width: 1px;
+    height: {{ block.settings.divider_height }}px;
+    background: {{ block.settings.divider_color }};
+    align-self: center;
+    opacity: {{ block.settings.divider_opacity }};
+  }
+  @media screen and (max-width: 749px) {
+    .ai-lux-track-{{ ai_gen_id }} {
+      gap: {{ block.settings.mobile_icon_spacing }}px;
+    }
+    .ai-lux-item-{{ ai_gen_id }} {
+      width: {{ block.settings.mobile_item_width }}px;
+      min-width: {{ block.settings.mobile_item_width }}px;
+    }
+    .ai-lux-svg-{{ ai_gen_id }} {
+      width: {{ block.settings.mobile_icon_size }}px;
+      height: {{ block.settings.mobile_icon_size }}px;
+    }
+    .ai-lux-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_text_size }}px;
+    }
+    .ai-lux-subtext-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_subtext_size }}px;
+    }
+    .ai-lux-carousel-{{ ai_gen_id }}::before,
+    .ai-lux-carousel-{{ ai_gen_id }}::after {
+      width: {{ block.settings.fade_width | divided_by: 2 }}px;
+    }
+  }
+{% endstyle %}
+<luxury-icon-carousel-{{ ai_gen_id }} class="ai-lux-carousel-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-lux-track-{{ ai_gen_id }}" aria-label="Scrolling feature icons">
+    {%- comment -%}First set of icons{%- endcomment -%}
+    {% if block.settings.icon_1_text != blank or block.settings.icon_1_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 18 L50 82" />
+          <path d="M36 32 L50 18 L64 32" />
+          <circle cx="50" cy="50" r="28" />
+          <path d="M38 46 L50 34 L62 46" />
+        </svg>
+      </div>
+      {% if block.settings.icon_1_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_1_text }}</div>{% endif %}
+      {% if block.settings.icon_1_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_1_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_2_text != blank or block.settings.icon_2_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="25" y="35" width="50" height="40" rx="2" />
+          <path d="M30 35 L30 30 Q30 20 40 20 L60 20 Q70 20 70 30 L70 35" />
+          <circle cx="50" cy="55" r="5" />
+          <path d="M35 50 L35 60 M65 50 L65 60" />
+          <line x1="40" y1="45" x2="60" y2="45" />
+        </svg>
+      </div>
+      {% if block.settings.icon_2_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_2_text }}</div>{% endif %}
+      {% if block.settings.icon_2_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_2_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_3_text != blank or block.settings.icon_3_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="50,20 65,40 80,45 65,60 70,80 50,70 30,80 35,60 20,45 35,40" />
+          <circle cx="50" cy="50" r="12" />
+          <path d="M50 38 L50 30 M50 70 L50 62 M38 50 L30 50 M70 50 L62 50" />
+        </svg>
+      </div>
+      {% if block.settings.icon_3_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_3_text }}</div>{% endif %}
+      {% if block.settings.icon_3_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_3_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_4_text != blank or block.settings.icon_4_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="35" />
+          <path d="M50 20 L50 50 L70 60" />
+          <circle cx="50" cy="50" r="3" />
+          <path d="M30 30 L35 35 M70 30 L65 35 M70 70 L65 65 M30 70 L35 65" />
+        </svg>
+      </div>
+      {% if block.settings.icon_4_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_4_text }}</div>{% endif %}
+      {% if block.settings.icon_4_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_4_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_5_text != blank or block.settings.icon_5_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M25 80 L50 25 L75 80 Z" fill="none" />
+          <circle cx="50" cy="55" r="10" />
+          <line x1="35" y1="65" x2="65" y2="65" />
+          <path d="M42 45 L50 25 L58 45" />
+        </svg>
+      </div>
+      {% if block.settings.icon_5_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_5_text }}</div>{% endif %}
+      {% if block.settings.icon_5_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_5_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_6_text != blank or block.settings.icon_6_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 20 C30 20 20 35 20 50 C20 72 50 85 50 85 C50 85 80 72 80 50 C80 35 70 20 50 20 Z" />
+          <path d="M38 50 L46 58 L64 40" />
+        </svg>
+      </div>
+      {% if block.settings.icon_6_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_6_text }}</div>{% endif %}
+      {% if block.settings.icon_6_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_6_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {%- comment -%}Duplicate set for seamless loop{%- endcomment -%}
+    {% if block.settings.icon_1_text != blank or block.settings.icon_1_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 18 L50 82" />
+          <path d="M36 32 L50 18 L64 32" />
+          <circle cx="50" cy="50" r="28" />
+          <path d="M38 46 L50 34 L62 46" />
+        </svg>
+      </div>
+      {% if block.settings.icon_1_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_1_text }}</div>{% endif %}
+      {% if block.settings.icon_1_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_1_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_2_text != blank or block.settings.icon_2_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="25" y="35" width="50" height="40" rx="2" />
+          <path d="M30 35 L30 30 Q30 20 40 20 L60 20 Q70 20 70 30 L70 35" />
+          <circle cx="50" cy="55" r="5" />
+          <path d="M35 50 L35 60 M65 50 L65 60" />
+          <line x1="40" y1="45" x2="60" y2="45" />
+        </svg>
+      </div>
+      {% if block.settings.icon_2_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_2_text }}</div>{% endif %}
+      {% if block.settings.icon_2_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_2_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_3_text != blank or block.settings.icon_3_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="50,20 65,40 80,45 65,60 70,80 50,70 30,80 35,60 20,45 35,40" />
+          <circle cx="50" cy="50" r="12" />
+          <path d="M50 38 L50 30 M50 70 L50 62 M38 50 L30 50 M70 50 L62 50" />
+        </svg>
+      </div>
+      {% if block.settings.icon_3_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_3_text }}</div>{% endif %}
+      {% if block.settings.icon_3_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_3_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_4_text != blank or block.settings.icon_4_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="35" />
+          <path d="M50 20 L50 50 L70 60" />
+          <circle cx="50" cy="50" r="3" />
+          <path d="M30 30 L35 35 M70 30 L65 35 M70 70 L65 65 M30 70 L35 65" />
+        </svg>
+      </div>
+      {% if block.settings.icon_4_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_4_text }}</div>{% endif %}
+      {% if block.settings.icon_4_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_4_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_5_text != blank or block.settings.icon_5_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M25 80 L50 25 L75 80 Z" fill="none" />
+          <circle cx="50" cy="55" r="10" />
+          <line x1="35" y1="65" x2="65" y2="65" />
+          <path d="M42 45 L50 25 L58 45" />
+        </svg>
+      </div>
+      {% if block.settings.icon_5_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_5_text }}</div>{% endif %}
+      {% if block.settings.icon_5_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_5_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+
+    {% if block.settings.icon_6_text != blank or block.settings.icon_6_subtext != blank %}
+    <div class="ai-lux-item-{{ ai_gen_id }}">
+      <div class="ai-lux-icon-wrap-{{ ai_gen_id }}">
+        <svg class="ai-lux-svg-{{ ai_gen_id }}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 20 C30 20 20 35 20 50 C20 72 50 85 50 85 C50 85 80 72 80 50 C80 35 70 20 50 20 Z" />
+          <path d="M38 50 L46 58 L64 40" />
+        </svg>
+      </div>
+      {% if block.settings.icon_6_text != blank %}<div class="ai-lux-text-{{ ai_gen_id }}">{{ block.settings.icon_6_text }}</div>{% endif %}
+      {% if block.settings.icon_6_subtext != blank %}<p class="ai-lux-subtext-{{ ai_gen_id }}">{{ block.settings.icon_6_subtext }}</p>{% endif %}
+    </div>
+    {% if block.settings.show_dividers %}<div class="ai-lux-divider-{{ ai_gen_id }}"></div>{% endif %}
+    {% endif %}
+  </div>
+</luxury-icon-carousel-{{ ai_gen_id }}>
+<script>
+  (function() {
+    class LuxuryIconCarousel{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        this.style.display = 'block';
+        this.initCarousel();
+      }
+      initCarousel() {
+        const track = this.querySelector('.ai-lux-track-{{ ai_gen_id }}');
+        if (!track) return;
+        const items = track.querySelectorAll('.ai-lux-item-{{ ai_gen_id }}');
+        if (items.length === 0) return;
+        const halfCount = Math.floor(items.length / 2);
+        let totalWidth = 0;
+        const gap = parseInt('{{ block.settings.icon_spacing }}') || 80;
+        for (let i = 0; i < halfCount; i++) {
+          totalWidth += items[i].offsetWidth + gap;
+          const divider = items[i].nextElementSibling;
+          if (divider && divider.classList.contains('ai-lux-divider-{{ ai_gen_id }}')) {
+            totalWidth += divider.offsetWidth + gap;
+          }
+        }
+        const speed = parseInt('{{ block.settings.scroll_speed }}') || 40;
+        const duration = totalWidth / speed;
+        track.style.setProperty('--ai-lux-duration-{{ ai_gen_id }}', duration + 's');
+        this.style.setProperty('--ai-lux-duration-{{ ai_gen_id }}', duration + 's');
+      }
+    }
+    if (!customElements.get('luxury-icon-carousel-{{ ai_gen_id }}')) {
+      customElements.define('luxury-icon-carousel-{{ ai_gen_id }}', LuxuryIconCarousel{{ ai_gen_id }});
+    }
+  })();
+</script>
+{% schema %}
+{
+  "name": "Luxury Icon Carousel",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Carousel"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll speed",
+      "info": "Pixels per second — lower is slower",
+      "min": 10,
+      "max": 120,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "scroll_direction",
+      "label": "Scroll direction",
+      "options": [
+        { "value": "normal", "label": "Left" },
+        { "value": "reverse", "label": "Right" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "select",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "options": [
+        { "value": "paused", "label": "Yes" },
+        { "value": "running", "label": "No" }
+      ],
+      "default": "paused"
+    },
+    {
+      "type": "range",
+      "id": "fade_width",
+      "label": "Edge fade width",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Icon style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 40,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_size",
+      "label": "Mobile icon size",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "stroke_weight",
+      "label": "Line weight",
+      "min": 0.5,
+      "max": 3,
+      "step": 0.5,
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "label": "Space between icons",
+      "min": 40,
+      "max": 250,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_spacing",
+      "label": "Mobile space between icons",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "icon_max_width",
+      "label": "Icon column width",
+      "min": 120,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 220
+    },
+    {
+      "type": "range",
+      "id": "mobile_item_width",
+      "label": "Mobile icon column width",
+      "min": 100,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "item_horizontal_padding",
+      "label": "Item horizontal padding",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "label": "Space between icon and text",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Dividers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dividers",
+      "label": "Show dividers between icons",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "divider_height",
+      "label": "Divider height",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "range",
+      "id": "divider_opacity",
+      "label": "Divider opacity",
+      "min": 0.1,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.4
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_size",
+      "label": "Mobile text size",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2c2c2c"
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1.5
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "label": "Text line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.4
+    },
+    {
+      "type": "header",
+      "content": "Subtext style"
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "label": "Subtext size",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "mobile_subtext_size",
+      "label": "Mobile subtext size",
+      "min": 7,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 9
+    },
+    {
+      "type": "color",
+      "id": "subtext_color",
+      "label": "Subtext color",
+      "default": "#999999"
+    },
+    {
+      "type": "select",
+      "id": "subtext_weight",
+      "label": "Subtext weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "300"
+    },
+    {
+      "type": "range",
+      "id": "subtext_line_height",
+      "label": "Subtext line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "subtext_padding",
+      "label": "Subtext horizontal padding",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Icon 1"
+    },
+    {
+      "type": "text",
+      "id": "icon_1_text",
+      "label": "Text",
+      "default": "Premium Quality"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_1_subtext",
+      "label": "Subtext",
+      "default": "Crafted with precision and care"
+    },
+    {
+      "type": "header",
+      "content": "Icon 2"
+    },
+    {
+      "type": "text",
+      "id": "icon_2_text",
+      "label": "Text",
+      "default": "Secure Packaging"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_2_subtext",
+      "label": "Subtext",
+      "default": "Protected luxury delivery"
+    },
+    {
+      "type": "header",
+      "content": "Icon 3"
+    },
+    {
+      "type": "text",
+      "id": "icon_3_text",
+      "label": "Text",
+      "default": "Certified Authentic"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_3_subtext",
+      "label": "Subtext",
+      "default": "Verified excellence guaranteed"
+    },
+    {
+      "type": "header",
+      "content": "Icon 4"
+    },
+    {
+      "type": "text",
+      "id": "icon_4_text",
+      "label": "Text",
+      "default": "Lifetime Warranty"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_4_subtext",
+      "label": "Subtext",
+      "default": "Guaranteed forever"
+    },
+    {
+      "type": "header",
+      "content": "Icon 5"
+    },
+    {
+      "type": "text",
+      "id": "icon_5_text",
+      "label": "Text",
+      "default": "Artisan Crafted"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_5_subtext",
+      "label": "Subtext",
+      "default": "Handmade by master artisans"
+    },
+    {
+      "type": "header",
+      "content": "Icon 6"
+    },
+    {
+      "type": "text",
+      "id": "icon_6_text",
+      "label": "Text",
+      "default": "Trusted Brand"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_6_subtext",
+      "label": "Subtext",
+      "default": "Loved by discerning clients"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury Icon Carousel"
+    }
+  ]
+}
+{% endschema %}
