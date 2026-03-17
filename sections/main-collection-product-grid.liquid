@@ -28,6 +28,9 @@ padding-top: {{ section.settings.padding_top }}px;
 padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+#main-collection-filters .pagination {
+  display: none;
+}
 {%- endstyle -%}
 <div class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}">
 {%- paginate collection.products by section.settings.products_per_page -%}
@@ -102,7 +105,8 @@ data-id="{{ section.id }}"
 results: collection,
 enable_filtering: section.settings.enable_filtering,
 enable_sorting: section.settings.enable_sorting,
-filter_type: section.settings.filter_type
+filter_type: section.settings.filter_type,
+paginate: paginate
 %}
 </aside>
 {%- endif -%}
