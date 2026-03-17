@@ -1,0 +1,323 @@
+{% doc %}
+  @prompt
+    2/3 right side of the page is an image, the left side is text with a thin "test bar" on top (8 boxes red to green) with a high-visibility repeating light animation to simulate a diamond tester.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% style %}
+  .ai-split-content-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    overflow: hidden;
+  }
+  .ai-split-content-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: row;
+    align-items: {{ block.settings.vertical_alignment }};
+    gap: {{ block.settings.gap }}px;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+  }
+  .ai-split-content-text-{{ ai_gen_id }} {
+    flex: 0 0 33.333%;
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.text_spacing }}px;
+    padding: {{ block.settings.text_padding }}px 0;
+    min-width: 0;
+  }
+  /* DIAMOND TESTER BAR - FORCED VISIBILITY & CENTERED ON DESKTOP */
+  .ai-test-bar-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    width: 200px;
+    height: 16px;
+    margin-bottom: 12px;
+    position: relative;
+    border-radius: 4px;
+    background: #111111 !important;
+    padding: 4px;
+    border: 2px solid #444;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+    box-sizing: border-box;
+    /* Center on desktop */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ai-test-box-{{ ai_gen_id }} {
+    flex: 1;
+    height: 100%;
+    border-radius: 1px;
+    opacity: 0.35;
+    transition: opacity 0.1s ease;
+    display: block !important;
+  }
+  /* HARDCODED COLORS - FORCED */
+  .ai-test-box-{{ ai_gen_id }}:nth-child(1) { background: #FF0000 !important; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(2) { background: #FF4500 !important; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(3) { background: #FF8C00 !important; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(4) { background: #FFA500 !important; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(5) { background: #FFD700 !important; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(6) { background: #ADFF2F !important; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(7) { background: #00FF00 !important; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(8) { background: #00FF00 !important; }
+  /* FORCED ANIMATION */
+  .ai-test-box-{{ ai_gen_id }} {
+    animation: tester-climb-{{ ai_gen_id }} 2s infinite linear;
+  }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(1) { animation-delay: 0.0s; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(2) { animation-delay: 0.1s; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(3) { animation-delay: 0.2s; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(4) { animation-delay: 0.3s; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(5) { animation-delay: 0.4s; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(6) { animation-delay: 0.5s; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(7) { animation-delay: 0.6s; }
+  .ai-test-box-{{ ai_gen_id }}:nth-child(8) { animation-delay: 0.7s; }
+  @keyframes tester-climb-{{ ai_gen_id }} {
+    0%, 15%, 100% {
+      opacity: 0.35;
+      box-shadow: none;
+      filter: brightness(0.8);
+    }
+    5%, 10% {
+      opacity: 1;
+      filter: brightness(1.5) saturate(1.5);
+      box-shadow: 0 0 12px currentColor;
+    }
+  }
+  /* SUCCESS FLICKER FOR GREEN BOXES */
+  .ai-test-box-{{ ai_gen_id }}:nth-child(7),
+  .ai-test-box-{{ ai_gen_id }}:nth-child(8) {
+    animation: tester-climb-{{ ai_gen_id }} 2s infinite linear,
+               tester-blink-{{ ai_gen_id }} 2s infinite linear;
+  }
+  @keyframes tester-blink-{{ ai_gen_id }} {
+    0%, 40% { opacity: 0.35; }
+    45%, 55%, 65% { opacity: 1; box-shadow: 0 0 15px #00FF00; filter: brightness(2); }
+    50%, 60% { opacity: 0.5; }
+    70%, 100% { opacity: 0.35; }
+  }
+  .ai-split-content-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: rgb(var(--color-foreground));
+    margin: 0;
+    text-align: {{ block.settings.text_alignment }};
+    line-height: 1.1;
+  }
+  .ai-split-content-subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size }}px;
+    color: rgba(var(--color-foreground), 0.75);
+    margin: 0;
+    text-align: {{ block.settings.text_alignment }};
+  }
+  .ai-split-content-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: rgba(var(--color-foreground), 0.75);
+    line-height: 1.5;
+    text-align: {{ block.settings.text_alignment }};
+  }
+  .ai-split-content-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: rgb(var(--color-button));
+    color: rgb(var(--color-button-text));
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    text-align: center;
+{% if block.settings.text_alignment == 'center' %} align-self: center; {% elsif block.settings.text_alignment == 'right' %} align-self: flex-end; {% else %} align-self: flex-start; {% endif %}
+  }
+  .ai-split-content-image-{{ ai_gen_id }} {
+    flex: 0 0 66.666%;
+    position: relative;
+    line-height: 0;
+  }
+  .ai-split-content-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+  /* Mobile image inline (between subheading and description) - hidden on desktop */
+  .ai-split-content-mobile-image-{{ ai_gen_id }} {
+    display: none;
+    line-height: 0;
+  }
+  .ai-split-content-mobile-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+  @media screen and (max-width: 749px) {
+    .ai-split-content-wrapper-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 24px;
+    }
+    .ai-split-content-text-{{ ai_gen_id }},
+    .ai-split-content-image-{{ ai_gen_id }} {
+      flex: 0 0 100%;
+    }
+    /* Hide the separate image column on mobile */
+    .ai-split-content-image-{{ ai_gen_id }} {
+      display: none;
+    }
+    /* Show the inline mobile image between subheading and description */
+    .ai-split-content-mobile-image-{{ ai_gen_id }} {
+      display: block;
+    }
+    .ai-test-bar-{{ ai_gen_id }} { margin-left: auto; margin-right: auto; }
+{% if block.settings.text_alignment == 'left' %}
+      .ai-test-bar-{{ ai_gen_id }} { margin-left: 0; }
+{% elsif block.settings.text_alignment == 'right' %}
+      .ai-test-bar-{{ ai_gen_id }} { margin-right: 0; }
+{% endif %}
+  }
+{% endstyle %}
+<div class="ai-split-content-{{ ai_gen_id }} color-{{ block.settings.color_scheme }}" {{ block.shopify_attributes }}>
+  <div class="ai-split-content-wrapper-{{ ai_gen_id }}">
+    <div class="ai-split-content-text-{{ ai_gen_id }}">
+      <div class="ai-test-bar-{{ ai_gen_id }}">
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+        <div class="ai-test-box-{{ ai_gen_id }}"></div>
+      </div>
+{% if block.settings.heading != blank %}
+        <h2 class="ai-split-content-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+{% endif %}
+{% if block.settings.subheading != blank %}
+        <h3 class="ai-split-content-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</h3>
+{% endif %}
+      <div class="ai-split-content-mobile-image-{{ ai_gen_id }}">
+{% if block.settings.image %}
+        <img
+          src="{{ block.settings.image | image_url: width: 2000 }}"
+          alt="{{ block.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.image.width }}"
+          height="{{ block.settings.image.height }}"
+        >
+{% else %}
+        <div style="width: 100%; aspect-ratio: 16/9; background: #222; display: flex; align-items: center; justify-content: center; border-radius: {{ block.settings.image_border_radius }}px;">
+{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+{% endif %}
+      </div>
+{% if block.settings.description != blank %}
+        <div class="ai-split-content-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+{% endif %}
+{% if block.settings.button_text != blank and block.settings.button_link != blank %}
+        <a href="{{ block.settings.button_link }}" class="ai-split-content-button-{{ ai_gen_id }}">
+{{ block.settings.button_text }}
+        </a>
+{% endif %}
+    </div>
+    <div class="ai-split-content-image-{{ ai_gen_id }}">
+{% if block.settings.image %}
+        <img
+          src="{{ block.settings.image | image_url: width: 2000 }}"
+          alt="{{ block.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.image.width }}"
+          height="{{ block.settings.image.height }}"
+        >
+{% else %}
+        <div style="width: 100%; aspect-ratio: 16/9; background: #222; display: flex; align-items: center; justify-content: center; border-radius: {{ block.settings.image_border_radius }}px;">
+{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+{% endif %}
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Split Content + Test Bar",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Overall width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Column gap",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical alignment",
+      "options": [
+        { "value": "flex-start", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Diamond Verified" },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 14, "max": 80, "step": 2, "unit": "px", "default": 40 },
+    { "type": "inline_richtext", "id": "subheading", "label": "Subheading", "default": "PASSES ALL TESTS" },
+    { "type": "range", "id": "subheading_size", "label": "Subheading size", "min": 10, "max": 40, "step": 2, "unit": "px", "default": 20 },
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Our stones are chemically and optically identical to mined diamonds, guaranteed to pass thermal conductivity testers.</p>" },
+    { "type": "range", "id": "description_size", "label": "Description size", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "select", "id": "text_alignment", "label": "Text alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" } ], "default": "left" },
+    { "type": "range", "id": "text_spacing", "label": "Spacing between elements", "min": 0, "max": 50, "step": 5, "unit": "px", "default": 20 },
+    { "type": "range", "id": "text_padding", "label": "Text block vertical padding", "min": 0, "max": 100, "step": 5, "unit": "px", "default": 20 },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Explore Quality" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "range", "id": "button_font_size", "label": "Button font size", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "button_padding_vertical", "label": "Button V-padding", "min": 5, "max": 30, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "button_padding_horizontal", "label": "Button H-padding", "min": 10, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "button_border_radius", "label": "Button border radius", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 4 },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "range", "id": "image_border_radius", "label": "Image border radius", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "Split Content + Test Bar" }]
+}
+{% endschema %}
