@@ -185,7 +185,14 @@
     .ai-test-bar-{{ ai_gen_id }} {
       width: 200px;
       height: 16px;
+      order: 3;
+      margin-bottom: 4px;
     }
+    .ai-split-content-heading-{{ ai_gen_id }} { order: 1; }
+    .ai-split-content-subheading-{{ ai_gen_id }} { order: 2; }
+    .ai-split-content-mobile-image-{{ ai_gen_id }} { order: 4; }
+    .ai-split-content-description-{{ ai_gen_id }} { order: 5; }
+    .ai-split-content-button-{{ ai_gen_id }} { order: 6; }
     /* Hide the separate image column on mobile */
     .ai-split-content-image-{{ ai_gen_id }} {
       display: none;
