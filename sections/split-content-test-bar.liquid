@@ -14,12 +14,12 @@
   .ai-split-content-wrapper-{{ ai_gen_id }} {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
-    gap: 0;
+    align-items: center;
+    gap: 40px;
     width: 100%;
-    max-width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0;
+    padding: {{ block.settings.section_padding_top }}px 50px {{ block.settings.section_padding_bottom }}px;
   }
   .ai-split-content-text-{{ ai_gen_id }} {
     flex: 0 0 33.333%;
@@ -28,7 +28,7 @@
     justify-content: center;
     align-items: center;
     gap: {{ block.settings.text_spacing }}px;
-    padding: {{ block.settings.section_padding_top }}px 40px {{ block.settings.section_padding_bottom }}px;
+    padding: 20px 0;
     min-width: 0;
     text-align: center;
   }
@@ -142,9 +142,8 @@
   }
   .ai-split-content-image-{{ ai_gen_id }} img {
     width: 100%;
-    height: 100%;
+    height: auto;
     display: block;
-    object-fit: cover;
     border-radius: {{ block.settings.image_border_radius }}px;
   }
   /* Mobile image inline (between subheading and description) - hidden on desktop */
