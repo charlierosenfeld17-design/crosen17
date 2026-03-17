@@ -80,15 +80,6 @@
     stroke-linejoin: round;
     animation: ai-radiate-{{ ai_gen_id }} {{ block.settings.radiate_speed }}s ease-in-out infinite;
   }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(2) .ai-luxury-icon-svg-{{ ai_gen_id }} {
-    animation-delay: {{ block.settings.radiate_stagger }}s;
-  }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(3) .ai-luxury-icon-svg-{{ ai_gen_id }} {
-    animation-delay: {% assign stagger2 = block.settings.radiate_stagger | times: 2 %}{{ stagger2 }}s;
-  }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(4) .ai-luxury-icon-svg-{{ ai_gen_id }} {
-    animation-delay: {% assign stagger3 = block.settings.radiate_stagger | times: 3 %}{{ stagger3 }}s;
-  }
   .ai-luxury-icon-text-{{ ai_gen_id }} {
     font-size: {{ block.settings.text_size }}px;
     color: {{ block.settings.text_color }};
@@ -100,15 +91,6 @@
     margin: 0;
     animation: ai-radiate-text-{{ ai_gen_id }} {{ block.settings.radiate_speed }}s ease-in-out infinite;
   }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(2) .ai-luxury-icon-text-{{ ai_gen_id }} {
-    animation-delay: {{ block.settings.radiate_stagger }}s;
-  }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(3) .ai-luxury-icon-text-{{ ai_gen_id }} {
-    animation-delay: {{ stagger2 }}s;
-  }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(4) .ai-luxury-icon-text-{{ ai_gen_id }} {
-    animation-delay: {{ stagger3 }}s;
-  }
   .ai-luxury-icon-subtext-{{ ai_gen_id }} {
     font-size: {{ block.settings.subtext_size }}px;
     color: {{ block.settings.subtext_color }};
@@ -118,15 +100,6 @@
     padding: 0 {{ block.settings.subtext_padding }}px;
     font-weight: {{ block.settings.subtext_weight }};
     animation: ai-radiate-text-{{ ai_gen_id }} {{ block.settings.radiate_speed }}s ease-in-out infinite;
-  }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(2) .ai-luxury-icon-subtext-{{ ai_gen_id }} {
-    animation-delay: {{ block.settings.radiate_stagger }}s;
-  }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(3) .ai-luxury-icon-subtext-{{ ai_gen_id }} {
-    animation-delay: {{ stagger2 }}s;
-  }
-  .ai-luxury-icon-item-{{ ai_gen_id }}:nth-child(4) .ai-luxury-icon-subtext-{{ ai_gen_id }} {
-    animation-delay: {{ stagger3 }}s;
   }
   @media (prefers-reduced-motion: reduce) {
     .ai-luxury-icon-svg-{{ ai_gen_id }},
@@ -316,16 +289,6 @@
       "step": 1,
       "unit": "s",
       "default": 4
-    },
-    {
-      "type": "range",
-      "id": "radiate_stagger",
-      "label": "Stagger delay between icons",
-      "min": 0,
-      "max": 3,
-      "step": 0.5,
-      "unit": "s",
-      "default": 1
     },
     {
       "type": "range",
