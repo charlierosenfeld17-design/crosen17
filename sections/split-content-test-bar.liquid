@@ -22,7 +22,7 @@
     padding: {{ block.settings.section_padding_top }}px 50px {{ block.settings.section_padding_bottom }}px;
   }
   .ai-split-content-text-{{ ai_gen_id }} {
-    flex: 1 1 45%;
+    flex: 1 1 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -135,17 +135,17 @@
     align-self: center;
   }
   .ai-split-content-image-{{ ai_gen_id }} {
-    flex: 1 1 55%;
+    flex: 1 1 50%;
     position: relative;
     line-height: 0;
     overflow: hidden;
-    max-height: 500px;
+    max-height: 380px;
     border-radius: {{ block.settings.image_border_radius }}px;
   }
   .ai-split-content-image-{{ ai_gen_id }} img {
     width: 100%;
     height: 100%;
-    max-height: 500px;
+    max-height: 380px;
     display: block;
     object-fit: cover;
     border-radius: {{ block.settings.image_border_radius }}px;
@@ -164,15 +164,13 @@
   @media screen and (max-width: 749px) {
     .ai-split-content-wrapper-{{ ai_gen_id }} {
       flex-direction: column;
-      gap: 24px;
+      gap: 16px;
       padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
     }
     .ai-split-content-text-{{ ai_gen_id }} {
       flex: 0 0 100%;
       padding: 0;
-    }
-    .ai-split-content-image-{{ ai_gen_id }} {
-      flex: 0 0 100%;
+      gap: 8px;
     }
     /* Hide the separate image column on mobile */
     .ai-split-content-image-{{ ai_gen_id }} {
@@ -181,6 +179,8 @@
     /* Show the inline mobile image between subheading and description */
     .ai-split-content-mobile-image-{{ ai_gen_id }} {
       display: block;
+      margin-top: 12px;
+      margin-bottom: 8px;
     }
   }
 {% endstyle %}
