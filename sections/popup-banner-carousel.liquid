@@ -34,6 +34,12 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   animation: ai-popup-slide-up-{{ ai_gen_id }} 0.4s ease-out;
 }
+@media (min-width: 768px) {
+  .ai-popup-banner-{{ ai_gen_id }} {
+    max-width: 900px;
+    overflow-y: auto;
+  }
+}
 @keyframes ai-popup-slide-up-{{ ai_gen_id }} {
   from {
     opacity: 0;
@@ -77,6 +83,12 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   gap: 0;
   min-height: auto;
 }
+@media (min-width: 768px) {
+  .ai-popup-banner__grid-{{ ai_gen_id }} {
+    grid-template-columns: 1fr 1fr;
+    min-height: 500px;
+  }
+}
 /* ── LEFT: Carousel ── */
 .ai-popup-banner__carousel-column-{{ ai_gen_id }} {
   position: relative;
@@ -90,6 +102,13 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   overflow: hidden;
   background-color: {{ block.settings.background_color }};
   border-radius: 8px 8px 0 0;
+}
+@media (min-width: 768px) {
+  .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
+    aspect-ratio: auto;
+    height: 100%;
+    border-radius: 8px 0 0 8px;
+  }
 }
 .ai-popup-banner__carousel-track-{{ ai_gen_id }} {
   position: relative;
@@ -165,6 +184,20 @@ Luxury editorial popup banner — left image carousel, right text with generous 
 .ai-popup-banner__text-content-{{ ai_gen_id }} {
   max-width: 100%;
   text-align: center;
+}
+@media (min-width: 768px) {
+  .ai-popup-banner__text-column-{{ ai_gen_id }} {
+    padding: 50px 40px;
+  }
+  .ai-popup-banner__text-content-{{ ai_gen_id }} {
+    text-align: left;
+  }
+  .ai-popup-banner__accent-{{ ai_gen_id }} {
+    margin-left: 0;
+  }
+  .ai-popup-banner__headline-{{ ai_gen_id }} {
+    text-align: left;
+  }
 }
 /* Decorative accent line */
 .ai-popup-banner__accent-{{ ai_gen_id }} {
@@ -345,9 +378,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       this.interval = parseInt(this.dataset.interval) || 4000;
       this.pauseOnHover = this.dataset.pauseOnHover === 'true';
       this.popupDelay = parseInt(this.dataset.popupDelay) || 1500;
-      var storageKey = 'ai_popup_dismissed_{{ ai_gen_id }}';
-      if (sessionStorage.getItem(storageKey)) return;
-      this.setupCloseListeners(storageKey);
+      this.setupCloseListeners();
       if (this.slides.length > 1) {
         this.setupCarouselListeners();
       } else if (this.controlButton) {
@@ -361,22 +392,21 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         }
       }.bind(this), this.popupDelay);
     }
-    setupCloseListeners(storageKey) {
+    setupCloseListeners() {
       var self = this;
       this.closeButton.addEventListener('click', function() {
-        self.closePopup(storageKey);
+        self.closePopup();
       });
       this.addEventListener('click', function(e) {
         if (e.target === self) {
-          self.closePopup(storageKey);
+          self.closePopup();
         }
       });
     }
-    closePopup(storageKey) {
+    closePopup() {
       this.classList.remove('is-visible');
       document.body.style.overflow = '';
       this.clearAutoplay();
-      sessionStorage.setItem(storageKey, '1');
     }
     setupCarouselListeners() {
       if (this.controlButton) {
