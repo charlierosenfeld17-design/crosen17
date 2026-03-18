@@ -1,0 +1,312 @@
+{% doc %}
+  @prompt
+    Sticky announcement bar with centered slowly glowing text that follows scroll on both mobile and desktop, sitting under the header. Fully customizable colors, glow effect, typography, layout, and sticky behavior.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% style %}
+  .ai-announcement-bar-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    overflow: hidden;
+  }
+
+  .ai-announcement-bar-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .ai-announcement-bar-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    margin: 0;
+    display: inline-block;
+    animation: ai-announcement-glow-{{ ai_gen_id }} {{ block.settings.glow_duration }}s ease-in-out infinite;
+  }
+
+  @keyframes ai-announcement-glow-{{ ai_gen_id }} {
+    0%, 100% {
+      text-shadow: 0 0 {{ block.settings.glow_intensity }}px {{ block.settings.glow_color }},
+                   0 0 {{ block.settings.glow_intensity | times: 2 }}px {{ block.settings.glow_color }};
+      opacity: {{ block.settings.glow_min_opacity }};
+    }
+    50% {
+      text-shadow: 0 0 {{ block.settings.glow_intensity | times: 1.5 }}px {{ block.settings.glow_color }},
+                   0 0 {{ block.settings.glow_intensity | times: 3 }}px {{ block.settings.glow_color }},
+                   0 0 {{ block.settings.glow_intensity | times: 4 }}px {{ block.settings.glow_color }};
+      opacity: {{ block.settings.glow_max_opacity }};
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar-{{ ai_gen_id }} {
+      {% unless block.settings.sticky_mobile %}
+        position: relative;
+        z-index: auto;
+      {% endunless %}
+      padding: {{ block.settings.padding_vertical_mobile }}px {{ block.settings.padding_horizontal_mobile }}px;
+    }
+    .ai-announcement-bar-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size_mobile }}px;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-announcement-bar-{{ ai_gen_id }} {
+      {% unless block.settings.sticky_desktop %}
+        position: relative;
+        z-index: auto;
+      {% endunless %}
+    }
+  }
+{% endstyle %}
+
+<announcement-bar-{{ ai_gen_id }} class="ai-announcement-bar-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-announcement-bar-container-{{ ai_gen_id }}">
+    {% if block.settings.announcement_text != blank %}
+      <p class="ai-announcement-bar-text-{{ ai_gen_id }}">
+        {{ block.settings.announcement_text }}
+      </p>
+    {% else %}
+      <p class="ai-announcement-bar-text-{{ ai_gen_id }}">
+        Add your announcement text
+      </p>
+    {% endif %}
+  </div>
+</announcement-bar-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBar{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+        this.setupStickyPosition();
+      }
+
+      setupAccessibility() {
+        this.setAttribute('role', 'region');
+        this.setAttribute('aria-label', 'Announcement');
+      }
+
+      setupStickyPosition() {
+        const header = document.querySelector('header, .header, .shopify-section-header, #shopify-section-header, sticky-header');
+        if (header) {
+          const updateTop = () => {
+            const headerHeight = header.getBoundingClientRect().height;
+            this.style.top = headerHeight + 'px';
+          };
+          updateTop();
+          window.addEventListener('resize', updateTop);
+          new ResizeObserver(updateTop).observe(header);
+        }
+      }
+    }
+
+    customElements.define('announcement-bar-{{ ai_gen_id }}', AnnouncementBar{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "default": "Welcome to our store"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "glow_color",
+      "label": "Glow",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Glow effect"
+    },
+    {
+      "type": "range",
+      "id": "glow_duration",
+      "label": "Duration",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "glow_intensity",
+      "label": "Intensity",
+      "min": 2,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "glow_min_opacity",
+      "label": "Minimum opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    },
+    {
+      "type": "range",
+      "id": "glow_max_opacity",
+      "label": "Maximum opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Font size on mobile",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 400,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 4,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical_mobile",
+      "label": "Vertical padding on mobile",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal_mobile",
+      "label": "Horizontal padding on mobile",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Sticky behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_mobile",
+      "label": "Stick to top on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_desktop",
+      "label": "Stick to top on desktop",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar"
+    }
+  ]
+}
+{% endschema %}
