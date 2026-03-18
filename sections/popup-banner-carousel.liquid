@@ -345,9 +345,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       this.interval = parseInt(this.dataset.interval) || 4000;
       this.pauseOnHover = this.dataset.pauseOnHover === 'true';
       this.popupDelay = parseInt(this.dataset.popupDelay) || 1500;
-      var storageKey = 'ai_popup_dismissed_{{ ai_gen_id }}';
-      if (sessionStorage.getItem(storageKey)) return;
-      this.setupCloseListeners(storageKey);
+      this.setupCloseListeners();
       if (this.slides.length > 1) {
         this.setupCarouselListeners();
       } else if (this.controlButton) {
@@ -361,22 +359,21 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         }
       }.bind(this), this.popupDelay);
     }
-    setupCloseListeners(storageKey) {
+    setupCloseListeners() {
       var self = this;
       this.closeButton.addEventListener('click', function() {
-        self.closePopup(storageKey);
+        self.closePopup();
       });
       this.addEventListener('click', function(e) {
         if (e.target === self) {
-          self.closePopup(storageKey);
+          self.closePopup();
         }
       });
     }
-    closePopup(storageKey) {
+    closePopup() {
       this.classList.remove('is-visible');
       document.body.style.overflow = '';
       this.clearAutoplay();
-      sessionStorage.setItem(storageKey, '1');
     }
     setupCarouselListeners() {
       if (this.controlButton) {
