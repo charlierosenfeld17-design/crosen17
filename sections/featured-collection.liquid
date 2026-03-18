@@ -29,16 +29,23 @@ margin-top: 0; /* Ensures no extra gap above subheading */
 max-width: 60rem; /* Keeps long descriptions readable while centered */
   }
 /* Dark brown product titles and prices */
-.section-{{ section.id }} .card__heading,
-.section-{{ section.id }} .card__heading a,
-.section-{{ section.id }} .card-information__text,
-.section-{{ section.id }} .card-information__text a,
-.section-{{ section.id }} .price-item,
-.section-{{ section.id }} .price-item--regular,
-.section-{{ section.id }} .price-item--sale,
-.section-{{ section.id }} .price-item--last,
-.section-{{ section.id }} .price .money,
-.section-{{ section.id }} .price {
+#shopify-section-{{ section.id }} .card__heading,
+#shopify-section-{{ section.id }} .card__heading a,
+#shopify-section-{{ section.id }} .card-information__text,
+#shopify-section-{{ section.id }} .card-information__text a,
+#shopify-section-{{ section.id }} .full-unstyled-link,
+#shopify-section-{{ section.id }} .card__content a,
+#shopify-section-{{ section.id }} .card-information a,
+#shopify-section-{{ section.id }} .card-information__wrapper a,
+#shopify-section-{{ section.id }} .price,
+#shopify-section-{{ section.id }} .price-item,
+#shopify-section-{{ section.id }} .price-item--regular,
+#shopify-section-{{ section.id }} .price-item--sale,
+#shopify-section-{{ section.id }} .price-item--last,
+#shopify-section-{{ section.id }} .price .money,
+#shopify-section-{{ section.id }} .card-product-info span,
+#shopify-section-{{ section.id }} .card-information .price *,
+#shopify-section-{{ section.id }} .card__content .price * {
 color: #3e2723 !important;
   }
 {%- endstyle -%}
