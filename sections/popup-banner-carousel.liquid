@@ -20,8 +20,9 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   transition: opacity 0.3s ease;
 }
 .ai-popup-banner-overlay-{{ ai_gen_id }}.is-visible {
-  display: flex;
-  opacity: 1;
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 .ai-popup-banner-{{ ai_gen_id }} {
   position: relative;
