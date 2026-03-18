@@ -1,0 +1,266 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* ── Luxury Rotating Announcement Bar ── */
+  .ai-rotating-announcement-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2c2424 50%, #1a1a1a 100%);
+    color: #f5f0eb;
+    padding: {{ block.settings.vertical_padding }}px 0;
+    position: relative;
+    z-index: 1;
+    border-bottom: 1px solid rgba(183, 155, 111, 0.25);
+    margin: 0;
+    line-height: 1;
+    font-family: "Playfair Display", "Didot", "Bodoni Moda", "Times New Roman", serif !important;
+  }
+
+  /* Subtle gold glow on left & right edges */
+  .ai-rotating-announcement-{{ ai_gen_id }}::before,
+  .ai-rotating-announcement-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 90px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .ai-rotating-announcement-{{ ai_gen_id }}::before {
+    left: 0;
+    background: linear-gradient(90deg, #1a1a1a 0%, transparent 100%);
+  }
+
+  .ai-rotating-announcement-{{ ai_gen_id }}::after {
+    right: 0;
+    background: linear-gradient(270deg, #1a1a1a 0%, transparent 100%);
+  }
+
+  /* Shimmer sweep */
+  .ai-rotating-announcement-shimmer-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(183, 155, 111, 0.03) 40%,
+      rgba(183, 155, 111, 0.07) 50%,
+      rgba(183, 155, 111, 0.03) 60%,
+      transparent 100%
+    );
+    animation: ai-announcement-shimmer-{{ ai_gen_id }} 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes ai-announcement-shimmer-{{ ai_gen_id }} {
+    0%   { left: -100%; }
+    50%  { left: 100%; }
+    100% { left: 100%; }
+  }
+
+  .ai-rotating-announcement-track-{{ ai_gen_id }} {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: ai-rotating-announcement-scroll-{{ ai_gen_id }} {{ block.settings.scroll_speed | times: 2 }}s linear infinite;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-rotating-announcement-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 0 {{ block.settings.item_spacing }}px;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+    text-transform: uppercase;
+    color: #f5f0eb;
+    font-variant-numeric: lining-nums !important;
+    font-feature-settings: "lnum" 1, "kern" 1 !important;
+  }
+
+  .ai-rotating-announcement-item-{{ ai_gen_id }} span.num-fix {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-weight: {{ block.settings.font_weight }};
+    font-size: 0.95em;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -1px;
+  }
+
+  .ai-rotating-announcement-separator-{{ ai_gen_id }} {
+    display: inline-block;
+    margin-left: {{ block.settings.separator_spacing }}px;
+    color: #b79b6f;
+    font-style: normal;
+    opacity: 0.85;
+  }
+
+  @keyframes ai-rotating-announcement-scroll-{{ ai_gen_id }} {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); }
+  }
+
+  .ai-rotating-announcement-{{ ai_gen_id }}:hover .ai-rotating-announcement-track-{{ ai_gen_id }} {
+    animation-play-state: {% if block.settings.pause_on_hover %}paused{% else %}running{% endif %};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-rotating-announcement-item-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | minus: 2 | at_least: 10 }}px;
+    }
+
+    .ai-rotating-announcement-{{ ai_gen_id }}::before,
+    .ai-rotating-announcement-{{ ai_gen_id }}::after {
+      width: 40px;
+    }
+  }
+{% endstyle %}
+
+<div id="AnnouncementBar-{{ ai_gen_id }}" class="ai-rotating-announcement-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <span class="ai-rotating-announcement-shimmer-{{ ai_gen_id }}" aria-hidden="true"></span>
+  <div class="ai-rotating-announcement-track-{{ ai_gen_id }}">
+    {% liquid
+      assign raw_announcements = ""
+      if block.settings.announcement_1 != blank
+        assign raw_announcements = raw_announcements | append: block.settings.announcement_1 | append: ":::"
+      endif
+      if block.settings.announcement_2 != blank
+        assign raw_announcements = raw_announcements | append: block.settings.announcement_2 | append: ":::"
+      endif
+      if block.settings.announcement_3 != blank
+        assign raw_announcements = raw_announcements | append: block.settings.announcement_3 | append: ":::"
+      endif
+      if block.settings.announcement_4 != blank
+        assign raw_announcements = raw_announcements | append: block.settings.announcement_4 | append: ":::"
+      endif
+      if block.settings.announcement_5 != blank
+        assign raw_announcements = raw_announcements | append: block.settings.announcement_5 | append: ":::"
+      endif
+      assign announcement_array = raw_announcements | split: ":::"
+    %}
+
+    {% for i in (1..6) %}
+      {% for text in announcement_array %}
+        {% if text != blank %}
+          <div class="ai-rotating-announcement-item-{{ ai_gen_id }}">
+            {{ text | regex_replace: '([0-9$]+)', '<span class="num-fix">\1</span>' }}
+            {% if block.settings.separator != blank %}
+              <span class="ai-rotating-announcement-separator-{{ ai_gen_id }}">
+                {{ block.settings.separator }}
+              </span>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Rotating announcement bar",
+  "settings": [
+    { "type": "header", "content": "Announcements" },
+    { "type": "text", "id": "announcement_1", "label": "Announcement 1", "default": "Free shipping on orders over $100" },
+    { "type": "text", "id": "announcement_2", "label": "Announcement 2", "default": "Diamond Tester Certified Moissanite" },
+    { "type": "text", "id": "announcement_3", "label": "Announcement 3", "default": "Luxury Design. Ethical Sourcing." },
+    { "type": "text", "id": "announcement_4", "label": "Announcement 4" },
+    { "type": "text", "id": "announcement_5", "label": "Announcement 5" },
+    { "type": "header", "content": "Style" },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "min": 0,
+      "max": 8,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 3.0
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 10
+    },
+    { "type": "header", "content": "Separator" },
+    { "type": "text", "id": "separator", "label": "Separator character", "default": "✧" },
+    {
+      "type": "range",
+      "id": "separator_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Separator spacing",
+      "default": 25
+    },
+    { "type": "header", "content": "Animation" },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "min": 5,
+      "max": 60,
+      "step": 1,
+      "unit": "s",
+      "label": "Scroll speed",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Item spacing",
+      "default": 50
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    }
+  ],
+  "presets": [
+    { "name": "Rotating announcement bar" }
+  ]
+}
+{% endschema %}
