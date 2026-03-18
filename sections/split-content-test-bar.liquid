@@ -163,45 +163,53 @@
   }
   @media screen and (max-width: 749px) {
     .ai-split-content-wrapper-{{ ai_gen_id }} {
-      flex-direction: column;
-      gap: 16px;
-      padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+      flex-direction: row;
+      gap: 12px;
+      padding: {{ block.settings.section_padding_top }}px 12px {{ block.settings.section_padding_bottom }}px;
+      align-items: center;
     }
     .ai-split-content-text-{{ ai_gen_id }} {
-      flex: 0 0 100%;
+      flex: 1 1 45%;
       padding: 0;
-      gap: 8px;
+      gap: 6px;
+      align-items: flex-start;
+      text-align: left;
     }
     .ai-split-content-heading-{{ ai_gen_id }} {
       font-size: {{ block.settings.heading_size }}px;
+      text-align: left;
     }
     .ai-split-content-subheading-{{ ai_gen_id }} {
       font-size: {{ block.settings.subheading_size }}px;
+      text-align: left;
     }
     .ai-split-content-description-{{ ai_gen_id }} {
       font-size: {{ block.settings.description_size }}px;
-      max-width: 420px;
+      text-align: left;
     }
     .ai-test-bar-{{ ai_gen_id }} {
-      width: 200px;
-      height: 16px;
-      order: 3;
-      margin-bottom: 4px;
+      width: 100%;
+      max-width: 160px;
+      height: 14px;
+      margin-bottom: 2px;
+      margin-left: 0;
+      margin-right: auto;
     }
-    .ai-split-content-heading-{{ ai_gen_id }} { order: 1; }
-    .ai-split-content-subheading-{{ ai_gen_id }} { order: 2; }
-    .ai-split-content-mobile-image-{{ ai_gen_id }} { order: 4; }
-    .ai-split-content-description-{{ ai_gen_id }} { order: 5; }
-    .ai-split-content-button-{{ ai_gen_id }} { order: 6; }
-    /* Hide the separate image column on mobile */
+    .ai-split-content-button-{{ ai_gen_id }} {
+      align-self: flex-start;
+      font-size: 13px;
+      padding: 8px 16px;
+    }
     .ai-split-content-image-{{ ai_gen_id }} {
-      display: none;
+      flex: 1 1 55%;
+      max-height: 260px;
     }
-    /* Show the inline mobile image between subheading and description */
+    .ai-split-content-image-{{ ai_gen_id }} img {
+      max-height: 260px;
+    }
+    /* Mobile-only image stays hidden; we use the regular image column */
     .ai-split-content-mobile-image-{{ ai_gen_id }} {
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 8px;
+      display: none;
     }
   }
 {% endstyle %}
