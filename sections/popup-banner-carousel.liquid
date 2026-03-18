@@ -34,6 +34,11 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   animation: ai-popup-slide-up-{{ ai_gen_id }} 0.4s ease-out;
 }
+@media screen and (min-width: 768px) {
+  .ai-popup-banner-{{ ai_gen_id }} {
+    max-width: 900px;
+  }
+}
 @keyframes ai-popup-slide-up-{{ ai_gen_id }} {
   from {
     opacity: 0;
@@ -77,6 +82,12 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   gap: 0;
   min-height: auto;
 }
+@media screen and (min-width: 768px) {
+  .ai-popup-banner__grid-{{ ai_gen_id }} {
+    grid-template-columns: 1fr 1fr;
+    min-height: 500px;
+  }
+}
 /* ── LEFT: Carousel ── */
 .ai-popup-banner__carousel-column-{{ ai_gen_id }} {
   position: relative;
@@ -90,6 +101,13 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   overflow: hidden;
   background-color: {{ block.settings.background_color }};
   border-radius: 8px 8px 0 0;
+}
+@media screen and (min-width: 768px) {
+  .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
+    aspect-ratio: auto;
+    height: 100%;
+    border-radius: 8px 0 0 8px;
+  }
 }
 .ai-popup-banner__carousel-track-{{ ai_gen_id }} {
   position: relative;
@@ -165,6 +183,22 @@ Luxury editorial popup banner — left image carousel, right text with generous 
 .ai-popup-banner__text-content-{{ ai_gen_id }} {
   max-width: 100%;
   text-align: center;
+}
+@media screen and (min-width: 768px) {
+  .ai-popup-banner__text-column-{{ ai_gen_id }} {
+    padding: 50px 40px;
+    align-items: flex-start;
+  }
+  .ai-popup-banner__text-content-{{ ai_gen_id }} {
+    text-align: left;
+  }
+  .ai-popup-banner__accent-{{ ai_gen_id }} {
+    margin-left: 0;
+    margin-right: auto;
+  }
+  .ai-popup-banner__headline-{{ ai_gen_id }} {
+    text-align: left;
+  }
 }
 /* Decorative accent line */
 .ai-popup-banner__accent-{{ ai_gen_id }} {
