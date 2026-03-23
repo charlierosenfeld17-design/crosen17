@@ -107,26 +107,17 @@
   /* ── Single item card ── */
   .cart-luxury__item {
     display: grid;
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 100px 1fr auto;
     gap: 1.5rem;
     padding: 2rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    align-items: start;
-  }
-
-  .cart-luxury__item .cart-luxury__quantity-col {
-    grid-column: 1 / -1;
+    align-items: center;
   }
 
   @media screen and (min-width: 750px) {
     .cart-luxury__item {
       grid-template-columns: 150px 1fr auto;
       gap: 2.5rem;
-      align-items: center;
-    }
-
-    .cart-luxury__item .cart-luxury__quantity-col {
-      grid-column: auto;
     }
   }
 
@@ -155,6 +146,7 @@
     gap: 0.4rem;
     min-width: 0;
     overflow: hidden;
+    color: #fff;
   }
 
   .cart-luxury__vendor {
@@ -170,7 +162,7 @@
     font-weight: 400;
     letter-spacing: 0.04em;
     text-decoration: none;
-    color: inherit;
+    color: #fff;
     margin: 0;
     transition: opacity 0.3s ease;
     word-wrap: break-word;
@@ -183,13 +175,15 @@
 
   .cart-luxury__variant-info {
     font-size: 1.4rem;
-    opacity: 0.6;
+    opacity: 0.8;
     margin: 0;
+    color: #fff;
   }
 
   .cart-luxury__price-single {
     font-size: 1.4rem;
     margin: 0;
+    color: #fff;
   }
 
   .cart-luxury__price-single s {
