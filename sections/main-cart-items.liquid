@@ -107,17 +107,27 @@
   /* ── Single item card ── */
   .cart-luxury__item {
     display: grid;
-    grid-template-columns: 100px 1fr auto;
+    grid-template-columns: 100px 1fr;
     gap: 1.5rem;
     padding: 2rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     align-items: center;
   }
 
+  .cart-luxury__item .cart-luxury__quantity-col {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+
   @media screen and (min-width: 750px) {
     .cart-luxury__item {
       grid-template-columns: 150px 1fr auto;
       gap: 2.5rem;
+    }
+
+    .cart-luxury__item .cart-luxury__quantity-col {
+      grid-column: auto;
+      justify-self: auto;
     }
   }
 
