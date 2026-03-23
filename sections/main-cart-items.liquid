@@ -114,18 +114,29 @@
     align-items: start;
   }
 
-  .cart-luxury__item .cart-luxury__actions {
+  .cart-luxury__item .cart-luxury__quantity-col {
     grid-column: 1 / -1;
+  }
+
+  .cart-luxury__item .cart-luxury__line-total {
+    grid-column: 1 / -1;
+    text-align: center;
   }
 
   @media screen and (min-width: 750px) {
     .cart-luxury__item {
-      grid-template-columns: 150px 1fr auto;
+      grid-template-columns: 150px 1fr auto auto;
       gap: 2.5rem;
+      align-items: center;
     }
 
-    .cart-luxury__item .cart-luxury__actions {
+    .cart-luxury__item .cart-luxury__quantity-col {
       grid-column: auto;
+    }
+
+    .cart-luxury__item .cart-luxury__line-total {
+      grid-column: auto;
+      text-align: right;
     }
   }
 
@@ -231,22 +242,13 @@
     height: 12px;
   }
 
-  /* Quantity + totals (right column) */
-  .cart-luxury__actions {
+  /* Quantity selector (centered column) */
+  .cart-luxury__quantity-col {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  @media screen and (min-width: 750px) {
-    .cart-luxury__actions {
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: flex-start;
-      min-width: 160px;
-    }
+    justify-content: center;
+    gap: 0.5rem;
   }
 
   .cart-luxury__line-total {
@@ -387,6 +389,16 @@
                       {{ item.product.title | escape }}
                     </a>
 
+                    {%- comment -%} Unit price ── {%- endcomment -%}
+                    {%- if item.original_price != item.final_price -%}
+                      <p class="cart-luxury__price-single">
+                        <s>{{ item.original_price | money }}</s>
+                        <strong>{{ item.final_price | money }}</strong>
+                      </p>
+                    {%- else -%}
+                      <p class="cart-luxury__price-single">{{ item.original_price | money }}</p>
+                    {%- endif -%}
+
                     {%- comment -%} Variants / properties ── {%- endcomment -%}
                     {%- if item.product.has_only_default_variant == false
                       or item.properties.size != 0
@@ -434,33 +446,8 @@
                     {%- endif -%}
                   </div>
 
-                  {%- comment -%} ── Actions column (quantity, total, remove) ── {%- endcomment -%}
-                  <div class="cart-luxury__actions">
-
-                    {%- comment -%} Line total ── {%- endcomment -%}
-                    <div class="cart-luxury__line-total">
-                      {%- render 'loading-spinner' -%}
-                      {%- if item.original_line_price != item.final_line_price -%}
-                        <s>{{ item.original_line_price | money }}</s>
-                        <span>{{ item.final_line_price | money }}</span>
-                      {%- else -%}
-                        <span>{{ item.original_line_price | money }}</span>
-                      {%- endif -%}
-
-                      {%- if item.variant.available and item.unit_price_measurement -%}
-                        <div class="cart-luxury__unit-price">
-                          <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
-                          {{ item.unit_price | money }}
-                          <span aria-hidden="true">/</span>
-                          <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
-                          {%- if item.unit_price_measurement.reference_value != 1 -%}
-                            {{- item.unit_price_measurement.reference_value -}}
-                          {%- endif -%}
-                          {{ item.unit_price_measurement.reference_unit }}
-                        </div>
-                      {%- endif -%}
-                    </div>
-
+                  {%- comment -%} ── Quantity selector (centered column) ── {%- endcomment -%}
+                  <div class="cart-luxury__quantity-col">
                     {%- comment -%} Quantity + remove ── {%- endcomment -%}
                     {%- liquid
                       assign has_qty_rules = false
@@ -620,6 +607,30 @@
                         <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
                       </div>
                     </quantity-popover>
+                  </div>
+
+                  {%- comment -%} ── Line total (right column) ── {%- endcomment -%}
+                  <div class="cart-luxury__line-total">
+                    {%- render 'loading-spinner' -%}
+                    {%- if item.original_line_price != item.final_line_price -%}
+                      <s>{{ item.original_line_price | money }}</s>
+                      <span>{{ item.final_line_price | money }}</span>
+                    {%- else -%}
+                      <span>{{ item.original_line_price | money }}</span>
+                    {%- endif -%}
+
+                    {%- if item.variant.available and item.unit_price_measurement -%}
+                      <div class="cart-luxury__unit-price">
+                        <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+                        {{ item.unit_price | money }}
+                        <span aria-hidden="true">/</span>
+                        <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+                        {%- if item.unit_price_measurement.reference_value != 1 -%}
+                          {{- item.unit_price_measurement.reference_value -}}
+                        {%- endif -%}
+                        {{ item.unit_price_measurement.reference_unit }}
+                      </div>
+                    {%- endif -%}
                   </div>
 
                 </li>
