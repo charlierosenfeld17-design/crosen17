@@ -21,8 +21,9 @@
   /* ── Luxury cart overrides ── */
   .cart-luxury__header {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     padding-bottom: 2rem;
     margin-bottom: 3rem;
@@ -33,7 +34,7 @@
     font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin: 0;
+    margin: 0 0 0.75rem;
   }
 
   .cart-luxury__continue {
@@ -105,17 +106,25 @@
   /* ── Single item card ── */
   .cart-luxury__item {
     display: grid;
-    grid-template-columns: 120px 1fr auto;
-    gap: 2rem;
+    grid-template-columns: 100px 1fr;
+    gap: 1.5rem;
     padding: 2rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     align-items: start;
   }
 
+  .cart-luxury__item .cart-luxury__actions {
+    grid-column: 1 / -1;
+  }
+
   @media screen and (min-width: 750px) {
     .cart-luxury__item {
       grid-template-columns: 150px 1fr auto;
-      gap: 3rem;
+      gap: 2.5rem;
+    }
+
+    .cart-luxury__item .cart-luxury__actions {
+      grid-column: auto;
     }
   }
 
@@ -141,7 +150,9 @@
   .cart-luxury__details {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .cart-luxury__vendor {
@@ -160,6 +171,8 @@
     color: inherit;
     margin: 0;
     transition: opacity 0.3s ease;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .cart-luxury__product-name:hover {
@@ -220,10 +233,19 @@
   /* Quantity + totals (right column) */
   .cart-luxury__actions {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 1rem;
-    min-width: 140px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cart-luxury__actions {
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-start;
+      min-width: 160px;
+    }
   }
 
   .cart-luxury__line-total {
