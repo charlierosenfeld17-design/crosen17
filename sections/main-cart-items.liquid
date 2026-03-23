@@ -157,7 +157,7 @@
   }
 
   .cart-luxury__vendor {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     opacity: 0.5;
@@ -165,7 +165,7 @@
   }
 
   .cart-luxury__product-name {
-    font-size: 1.3rem;
+    font-size: 1.6rem;
     font-weight: 400;
     letter-spacing: 0.04em;
     text-decoration: none;
@@ -181,7 +181,7 @@
   }
 
   .cart-luxury__variant-info {
-    font-size: 1rem;
+    font-size: 1.2rem;
     opacity: 0.6;
     margin: 0;
   }
@@ -250,7 +250,7 @@
   }
 
   .cart-luxury__line-total {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     letter-spacing: 0.04em;
     text-align: right;
   }
@@ -282,6 +282,15 @@
     height: 28px;
     opacity: 0.4;
     transition: opacity 0.3s ease;
+    color: currentColor;
+  }
+
+  /* Remove any blue link/button colors in cart */
+  .cart-luxury__item a,
+  .cart-luxury__item button,
+  .cart-luxury__item .quantity__button,
+  .cart-luxury__quantity-row a {
+    color: currentColor;
   }
 
   .cart-luxury__remove a:hover {
@@ -377,16 +386,6 @@
                     <a href="{{ item.url }}" class="cart-luxury__product-name">
                       {{ item.product.title | escape }}
                     </a>
-
-                    {%- comment -%} Unit price ── {%- endcomment -%}
-                    {%- if item.original_price != item.final_price -%}
-                      <p class="cart-luxury__price-single">
-                        <s>{{ item.original_price | money }}</s>
-                        <strong>{{ item.final_price | money }}</strong>
-                      </p>
-                    {%- else -%}
-                      <p class="cart-luxury__price-single">{{ item.original_price | money }}</p>
-                    {%- endif -%}
 
                     {%- comment -%} Variants / properties ── {%- endcomment -%}
                     {%- if item.product.has_only_default_variant == false
