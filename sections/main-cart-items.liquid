@@ -118,25 +118,15 @@
     grid-column: 1 / -1;
   }
 
-  .cart-luxury__item .cart-luxury__line-total {
-    grid-column: 1 / -1;
-    text-align: center;
-  }
-
   @media screen and (min-width: 750px) {
     .cart-luxury__item {
-      grid-template-columns: 150px 1fr auto auto;
+      grid-template-columns: 150px 1fr auto;
       gap: 2.5rem;
       align-items: center;
     }
 
     .cart-luxury__item .cart-luxury__quantity-col {
       grid-column: auto;
-    }
-
-    .cart-luxury__item .cart-luxury__line-total {
-      grid-column: auto;
-      text-align: right;
     }
   }
 
@@ -168,7 +158,7 @@
   }
 
   .cart-luxury__vendor {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     opacity: 0.5;
@@ -176,7 +166,7 @@
   }
 
   .cart-luxury__product-name {
-    font-size: 1.6rem;
+    font-size: 2rem;
     font-weight: 400;
     letter-spacing: 0.04em;
     text-decoration: none;
@@ -192,13 +182,13 @@
   }
 
   .cart-luxury__variant-info {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     opacity: 0.6;
     margin: 0;
   }
 
   .cart-luxury__price-single {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     margin: 0;
   }
 
@@ -251,29 +241,37 @@
     gap: 0.5rem;
   }
 
-  .cart-luxury__line-total {
-    font-size: 1.4rem;
-    letter-spacing: 0.04em;
-    text-align: right;
-  }
-
-  .cart-luxury__line-total s {
-    display: block;
-    font-size: 1rem;
-    opacity: 0.5;
-  }
-
-  .cart-luxury__unit-price {
-    font-size: 0.95rem;
-    opacity: 0.5;
-    text-align: right;
-    margin-top: 0.25rem;
-  }
 
   .cart-luxury__quantity-row {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+  }
+
+  /* Center the quantity number inside the input box */
+  .cart-luxury__quantity-col .quantity__input {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -moz-appearance: textfield;
+  }
+
+  .cart-luxury__quantity-col .quantity__input::-webkit-outer-spin-button,
+  .cart-luxury__quantity-col .quantity__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .cart-luxury__quantity-col .quantity {
+    display: flex;
+    align-items: center;
+  }
+
+  .cart-luxury__quantity-col .quantity__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .cart-luxury__remove a {
@@ -609,29 +607,6 @@
                     </quantity-popover>
                   </div>
 
-                  {%- comment -%} ── Line total (right column) ── {%- endcomment -%}
-                  <div class="cart-luxury__line-total">
-                    {%- render 'loading-spinner' -%}
-                    {%- if item.original_line_price != item.final_line_price -%}
-                      <s>{{ item.original_line_price | money }}</s>
-                      <span>{{ item.final_line_price | money }}</span>
-                    {%- else -%}
-                      <span>{{ item.original_line_price | money }}</span>
-                    {%- endif -%}
-
-                    {%- if item.variant.available and item.unit_price_measurement -%}
-                      <div class="cart-luxury__unit-price">
-                        <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
-                        {{ item.unit_price | money }}
-                        <span aria-hidden="true">/</span>
-                        <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
-                        {%- if item.unit_price_measurement.reference_value != 1 -%}
-                          {{- item.unit_price_measurement.reference_value -}}
-                        {%- endif -%}
-                        {{ item.unit_price_measurement.reference_unit }}
-                      </div>
-                    {%- endif -%}
-                  </div>
 
                 </li>
               {%- endfor -%}
