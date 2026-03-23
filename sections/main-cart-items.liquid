@@ -38,13 +38,14 @@
   }
 
   .cart-luxury__continue {
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     text-decoration: none;
     border-bottom: 1px solid currentColor;
     padding-bottom: 2px;
     transition: opacity 0.3s ease;
+    color: rgb(var(--color-scheme-7-foreground, var(--color-foreground)));
   }
 
   .cart-luxury__continue:hover {
@@ -58,7 +59,7 @@
   }
 
   .cart-luxury__empty-text {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 400;
     letter-spacing: 0.06em;
     margin-bottom: 1.5rem;
@@ -67,7 +68,7 @@
   .cart-luxury__empty-cta {
     display: inline-block;
     padding: 1rem 3rem;
-    font-size: 0.8rem;
+    font-size: 1rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     text-decoration: none;
@@ -156,7 +157,7 @@
   }
 
   .cart-luxury__vendor {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     opacity: 0.5;
@@ -164,7 +165,7 @@
   }
 
   .cart-luxury__product-name {
-    font-size: 1rem;
+    font-size: 1.3rem;
     font-weight: 400;
     letter-spacing: 0.04em;
     text-decoration: none;
@@ -180,13 +181,13 @@
   }
 
   .cart-luxury__variant-info {
-    font-size: 0.8rem;
+    font-size: 1rem;
     opacity: 0.6;
     margin: 0;
   }
 
   .cart-luxury__price-single {
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     margin: 0;
   }
 
@@ -201,7 +202,7 @@
   }
 
   .cart-luxury__selling-plan {
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     opacity: 0.5;
     margin: 0.25rem 0 0;
   }
@@ -219,7 +220,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     padding: 0.25rem 0.6rem;
     background: rgba(0, 0, 0, 0.04);
     border-radius: 2px;
@@ -249,19 +250,19 @@
   }
 
   .cart-luxury__line-total {
-    font-size: 1rem;
+    font-size: 1.2rem;
     letter-spacing: 0.04em;
     text-align: right;
   }
 
   .cart-luxury__line-total s {
     display: block;
-    font-size: 0.8rem;
+    font-size: 1rem;
     opacity: 0.5;
   }
 
   .cart-luxury__unit-price {
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     opacity: 0.5;
     text-align: right;
     margin-top: 0.25rem;
@@ -320,7 +321,7 @@
     {%- comment -%} ── Header ── {%- endcomment -%}
     <div class="cart-luxury__header">
       <h1 class="cart-luxury__title">{{ 'sections.cart.title' | t }}</h1>
-      <a href="{{ routes.all_products_collection_url }}" class="cart-luxury__continue">
+      <a href="{{ routes.all_products_collection_url }}" class="cart-luxury__continue color-scheme-7">
         {{- 'general.continue_shopping' | t -}}
       </a>
     </div>
