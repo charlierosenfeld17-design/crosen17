@@ -1,212 +1,325 @@
 {% doc %}
 @prompt
-Luxury editorial popup banner — left image carousel, right text with generous whitespace and decorative accents.
+Luxury editorial popup banner — left image carousel, right text with generous whitespace and decorative accents. Updated to show on every home screen load.
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 {% style %}
 /* ── POPUP OVERLAY ── */
-.ai-popup-banner-overlay-{{ ai_gen_id }} {
+.ai-popup-overlay-{{ ai_gen_id }} {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 9999;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.ai-popup-banner-overlay-{{ ai_gen_id }}.is-visible {
+.ai-popup-overlay-{{ ai_gen_id }}.is-visible {
   display: flex;
   opacity: 1;
 }
-.ai-popup-banner-{{ ai_gen_id }} {
+
+/* ── POPUP CONTAINER ── */
+.ai-popup-{{ ai_gen_id }} {
   position: relative;
-  width: 92%;
-  max-width: 420px;
+  width: 94%;
+  max-width: 440px;
   max-height: 90vh;
-  overflow-y: auto;
-  background-color: {{ block.settings.background_color }};
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  animation: ai-popup-slide-up-{{ ai_gen_id }} 0.4s ease-out;
+  overflow: hidden;
+  background: {{ block.settings.background_color }};
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  animation: ai-popup-enter-{{ ai_gen_id }} 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-@keyframes ai-popup-slide-up-{{ ai_gen_id }} {
+@media (min-width: 768px) {
+  .ai-popup-{{ ai_gen_id }} {
+    max-width: 960px;
+  }
+}
+@keyframes ai-popup-enter-{{ ai_gen_id }} {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: scale(0.96) translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 }
+
 /* ── CLOSE BUTTON ── */
-.ai-popup-banner__close-{{ ai_gen_id }} {
+.ai-popup__close-{{ ai_gen_id }} {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border: none;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 20;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
-.ai-popup-banner__close-{{ ai_gen_id }}:hover {
-  background-color: rgba(0, 0, 0, 0.7);
+.ai-popup__close-{{ ai_gen_id }}:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
 }
-.ai-popup-banner__close-{{ ai_gen_id }} svg {
-  width: 14px;
-  height: 14px;
+.ai-popup__close-{{ ai_gen_id }} svg {
+  width: 12px;
+  height: 12px;
   stroke: #ffffff;
   stroke-width: 2;
+  stroke-linecap: round;
   fill: none;
 }
-.ai-popup-banner__grid-{{ ai_gen_id }} {
+
+/* ── GRID LAYOUT ── */
+.ai-popup__grid-{{ ai_gen_id }} {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0;
   min-height: auto;
 }
+@media (min-width: 768px) {
+  .ai-popup__grid-{{ ai_gen_id }} {
+    grid-template-columns: 1fr 1fr;
+    min-height: 520px;
+  }
+}
+
 /* ── LEFT: Carousel ── */
-.ai-popup-banner__carousel-column-{{ ai_gen_id }} {
+.ai-popup__carousel-col-{{ ai_gen_id }} {
   position: relative;
   width: 100%;
   overflow: hidden;
 }
-.ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
+.ai-popup__carousel-wrap-{{ ai_gen_id }} {
   position: relative;
   width: 100%;
   aspect-ratio: {{ block.settings.carousel_aspect_ratio }};
   overflow: hidden;
-  background-color: {{ block.settings.background_color }};
-  border-radius: 8px 8px 0 0;
+  background: {{ block.settings.background_color }};
 }
-.ai-popup-banner__carousel-track-{{ ai_gen_id }} {
+@media (min-width: 768px) {
+  .ai-popup__carousel-wrap-{{ ai_gen_id }} {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+}
+.ai-popup__carousel-track-{{ ai_gen_id }} {
   position: relative;
   width: 100%;
   height: 100%;
 }
-.ai-popup-banner__carousel-slide-{{ ai_gen_id }} {
+.ai-popup__slide-{{ ai_gen_id }} {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   opacity: 0;
-  transition: opacity {{ block.settings.transition_duration }}ms ease-in-out;
+  transition: opacity {{ block.settings.transition_duration }}ms cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
-.ai-popup-banner__carousel-slide-{{ ai_gen_id }}.active {
+.ai-popup__slide-{{ ai_gen_id }}.active {
   opacity: 1;
   pointer-events: auto;
 }
-.ai-popup-banner__carousel-slide-{{ ai_gen_id }} img {
+.ai-popup__slide-{{ ai_gen_id }} img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  animation: ai-popup-ken-burns-{{ ai_gen_id }} 12s ease-in-out infinite alternate;
 }
-.ai-popup-banner__carousel-placeholder-{{ ai_gen_id }} {
+@keyframes ai-popup-ken-burns-{{ ai_gen_id }} {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+.ai-popup__placeholder-{{ ai_gen_id }} {
   width: 100%;
   height: 100%;
-  background-color: #f4f4f4;
+  background: #f0eeeb;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.ai-popup-banner__carousel-placeholder-{{ ai_gen_id }} svg {
+.ai-popup__placeholder-{{ ai_gen_id }} svg {
   width: 100%;
   height: 100%;
   max-width: 400px;
   max-height: 400px;
+  opacity: 0.6;
 }
-.ai-popup-banner__control-{{ ai_gen_id }} {
+
+/* ── Carousel Dots ── */
+.ai-popup__dots-{{ ai_gen_id }} {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+.ai-popup__dot-{{ ai_gen_id }} {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.ai-popup__dot-{{ ai_gen_id }}.active {
+  background: #ffffff;
+  width: 20px;
+  border-radius: 3px;
+}
+
+/* ── Carousel Control ── */
+.ai-popup__control-{{ ai_gen_id }} {
   position: absolute;
   bottom: {{ block.settings.control_position_bottom }}px;
   left: {{ block.settings.control_position_left }}px;
   width: {{ block.settings.control_size }}px;
   height: {{ block.settings.control_size }}px;
-  background-color: {{ block.settings.control_bg_color }};
+  background: {{ block.settings.control_bg_color }};
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
-.ai-popup-banner__control-{{ ai_gen_id }}:hover {
+.ai-popup__control-{{ ai_gen_id }}:hover {
   opacity: 0.8;
 }
-.ai-popup-banner__control-icon-{{ ai_gen_id }} {
+.ai-popup__control-icon-{{ ai_gen_id }} {
   width: 50%;
   height: 50%;
   fill: {{ block.settings.control_icon_color }};
 }
-/* ── RIGHT: Text ── */
-.ai-popup-banner__text-column-{{ ai_gen_id }} {
-  background-color: {{ block.settings.background_color }};
+
+/* ── RIGHT: Text Column ── */
+.ai-popup__text-col-{{ ai_gen_id }} {
+  background: {{ block.settings.background_color }};
   padding: {{ block.settings.text_padding_mobile }}px {{ block.settings.mobile_side_padding }}px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
-.ai-popup-banner__text-content-{{ ai_gen_id }} {
+@media (min-width: 768px) {
+  .ai-popup__text-col-{{ ai_gen_id }} {
+    padding: 60px 48px;
+  }
+}
+
+/* Decorative corner accents */
+.ai-popup__text-col-{{ ai_gen_id }}::before,
+.ai-popup__text-col-{{ ai_gen_id }}::after {
+  content: '';
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: {{ block.settings.headline_color }};
+  border-style: solid;
+  opacity: 0.12;
+  pointer-events: none;
+}
+.ai-popup__text-col-{{ ai_gen_id }}::before {
+  top: 20px;
+  left: 20px;
+  border-width: 1px 0 0 1px;
+}
+.ai-popup__text-col-{{ ai_gen_id }}::after {
+  bottom: 20px;
+  right: 20px;
+  border-width: 0 1px 1px 0;
+}
+@media (min-width: 768px) {
+  .ai-popup__text-col-{{ ai_gen_id }}::before {
+    top: 28px;
+    left: 28px;
+    width: 40px;
+    height: 40px;
+  }
+  .ai-popup__text-col-{{ ai_gen_id }}::after {
+    bottom: 28px;
+    right: 28px;
+    width: 40px;
+    height: 40px;
+  }
+}
+.ai-popup__text-inner-{{ ai_gen_id }} {
   max-width: 100%;
   text-align: center;
 }
+
 /* Decorative accent line */
-.ai-popup-banner__accent-{{ ai_gen_id }} {
-  width: 48px;
+.ai-popup__accent-{{ ai_gen_id }} {
+  width: 40px;
   height: 1px;
-  background-color: {{ block.settings.headline_color }};
+  background: linear-gradient(90deg, transparent, {{ block.settings.headline_color }}, transparent);
   margin: 0 auto {{ block.settings.pill_margin_bottom }}px auto;
-  opacity: 0.25;
+  opacity: 0.3;
 }
-.ai-popup-banner__pill-{{ ai_gen_id }} {
+
+/* Pill / Tag */
+.ai-popup__pill-{{ ai_gen_id }} {
   display: inline-block;
-  background-color: {{ block.settings.pill_bg_color }};
+  background: {{ block.settings.pill_bg_color }};
   color: {{ block.settings.pill_text_color }};
   padding: {{ block.settings.pill_padding_vertical }}px {{ block.settings.pill_padding_horizontal }}px;
   font-size: {{ block.settings.pill_font_size }}px;
   text-transform: uppercase;
   letter-spacing: {{ block.settings.pill_letter_spacing }}px;
-  font-weight: 600;
+  font-weight: 500;
   border-radius: {{ block.settings.pill_border_radius }}px;
   margin-bottom: {{ block.settings.pill_margin_bottom }}px;
 }
-.ai-popup-banner__headline-{{ ai_gen_id }} {
+
+/* Headline */
+.ai-popup__headline-{{ ai_gen_id }} {
   font-size: {{ block.settings.headline_font_size_mobile }}px;
   line-height: {{ block.settings.headline_line_height }};
-  color: {{ block.settings.headline_color }};
+  color: {{ block.settings.headline_color }} !important;
   text-transform: uppercase;
   font-weight: {{ block.settings.headline_font_weight }};
   margin: 0 0 {{ block.settings.headline_margin_bottom }}px 0;
   letter-spacing: {{ block.settings.headline_letter_spacing }}px;
   text-align: center;
 }
-.ai-popup-banner__subtext-{{ ai_gen_id }} {
+
+/* Subtext */
+.ai-popup__subtext-{{ ai_gen_id }} {
   font-size: {{ block.settings.subtext_font_size }}px;
   color: {{ block.settings.subtext_color }};
   margin: 0 0 {{ block.settings.subtext_margin_bottom }}px 0;
   font-weight: 400;
+  line-height: 1.6;
 }
-.ai-popup-banner__subtext-{{ ai_gen_id }} a {
-  text-decoration: underline;
+.ai-popup__subtext-{{ ai_gen_id }} a {
   color: {{ block.settings.subtext_color }};
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: opacity 0.3s ease;
 }
-.ai-popup-banner__cta-{{ ai_gen_id }} {
+.ai-popup__subtext-{{ ai_gen_id }} a:hover {
+  opacity: 0.6;
+}
+
+/* CTA Button */
+.ai-popup__cta-{{ ai_gen_id }} {
   display: inline-block;
   font-size: {{ block.settings.cta_font_size }}px;
   color: {{ block.settings.cta_color }};
@@ -215,116 +328,159 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   letter-spacing: {{ block.settings.cta_letter_spacing }}px;
   font-weight: 500;
   position: relative;
-  padding-bottom: 3px;
-  transition: opacity 0.3s ease;
+  padding: 12px 32px;
+  border: 1px solid {{ block.settings.cta_color }};
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
-.ai-popup-banner__cta-{{ ai_gen_id }}::after {
+.ai-popup__cta-{{ ai_gen_id }}::before {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: {{ block.settings.cta_color }};
-  transition: transform 0.35s ease;
-  transform-origin: left;
-}
-.ai-popup-banner__cta-{{ ai_gen_id }}:hover {
-  opacity: 0.7;
-}
-.ai-popup-banner__cta-{{ ai_gen_id }}:hover::after {
+  inset: 0;
+  background: {{ block.settings.cta_color }};
   transform: scaleX(0);
   transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+.ai-popup__cta-{{ ai_gen_id }}:hover {
+  color: {{ block.settings.background_color }};
+}
+.ai-popup__cta-{{ ai_gen_id }}:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Second accent below CTA */
+.ai-popup__accent-bottom-{{ ai_gen_id }} {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, {{ block.settings.headline_color }}, transparent);
+  margin: {{ block.settings.pill_margin_bottom }}px auto 0 auto;
+  opacity: 0.3;
 }
 {% endstyle %}
+
 <popup-carousel-{{ ai_gen_id }}
-  class="ai-popup-banner-overlay-{{ ai_gen_id }}"
+  class="ai-popup-overlay-{{ ai_gen_id }}"
   data-autoplay="{{ block.settings.autoplay }}"
   data-interval="{{ block.settings.autoplay_interval }}"
   data-pause-on-hover="{{ block.settings.pause_on_hover }}"
   data-popup-delay="{{ block.settings.popup_delay }}"
-{{ block.shopify_attributes }}
+  {{ block.shopify_attributes }}
 >
-  <div class="ai-popup-banner-{{ ai_gen_id }}">
-    <button class="ai-popup-banner__close-{{ ai_gen_id }}" aria-label="Close popup" data-close>
+  <div class="ai-popup-{{ ai_gen_id }}">
+    <button class="ai-popup__close-{{ ai_gen_id }}" aria-label="Close popup" data-close>
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <line x1="6" y1="6" x2="18" y2="18"/>
         <line x1="18" y1="6" x2="6" y2="18"/>
       </svg>
     </button>
-    <div class="ai-popup-banner__grid-{{ ai_gen_id }}">
-      <div class="ai-popup-banner__carousel-column-{{ ai_gen_id }}">
-        <div class="ai-popup-banner__carousel-wrapper-{{ ai_gen_id }}">
-          <div class="ai-popup-banner__carousel-track-{{ ai_gen_id }}">
-{% if block.settings.image_1 != blank or block.settings.image_2 != blank or block.settings.image_3 != blank or block.settings.image_4 != blank or block.settings.image_5 != blank %}
+    <div class="ai-popup__grid-{{ ai_gen_id }}">
+
+      <!-- Carousel Column -->
+      <div class="ai-popup__carousel-col-{{ ai_gen_id }}">
+        <div class="ai-popup__carousel-wrap-{{ ai_gen_id }}">
+          <div class="ai-popup__carousel-track-{{ ai_gen_id }}">
+{% assign has_images = false %}
+{% assign slide_count = 0 %}
 {% for i in (1..5) %}
-{% assign image_key = 'image_' | append: i %}
-{% assign image = block.settings[image_key] %}
-{% if image != blank %}
-                  <div class="ai-popup-banner__carousel-slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.index }}">
-                    <img
-                      src="{{ image | image_url: width: 1400 }}"
-                      alt="{{ image.alt | escape }}"
-                      loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                      width="{{ image.width }}"
-                      height="{{ image.height }}"
-                    >
-                  </div>
-{% endif %}
+  {% assign image_key = 'image_' | append: i %}
+  {% assign image = block.settings[image_key] %}
+  {% if image != blank %}
+    {% assign has_images = true %}
+    {% assign slide_count = slide_count | plus: 1 %}
+  {% endif %}
 {% endfor %}
+
+{% if has_images %}
+  {% assign real_index = 0 %}
+  {% for i in (1..5) %}
+    {% assign image_key = 'image_' | append: i %}
+    {% assign image = block.settings[image_key] %}
+    {% if image != blank %}
+            <div class="ai-popup__slide-{{ ai_gen_id }}{% if real_index == 0 %} active{% endif %}" data-slide="{{ real_index }}">
+              <img
+                src="{{ image | image_url: width: 1400 }}"
+                alt="{{ image.alt | escape }}"
+                loading="{% if real_index == 0 %}eager{% else %}lazy{% endif %}"
+                width="{{ image.width }}"
+                height="{{ image.height }}"
+              >
+            </div>
+      {% assign real_index = real_index | plus: 1 %}
+    {% endif %}
+  {% endfor %}
 {% else %}
-              <div class="ai-popup-banner__carousel-slide-{{ ai_gen_id }} active" data-slide="1">
-                <div class="ai-popup-banner__carousel-placeholder-{{ ai_gen_id }}">
-{{ 'hero-apparel-1' | placeholder_svg_tag }}
-                </div>
+            <div class="ai-popup__slide-{{ ai_gen_id }} active" data-slide="0">
+              <div class="ai-popup__placeholder-{{ ai_gen_id }}">
+                {{ 'hero-apparel-1' | placeholder_svg_tag }}
               </div>
+            </div>
 {% endif %}
           </div>
+
+          <!-- Dot Indicators -->
+{% if slide_count > 1 %}
+          <div class="ai-popup__dots-{{ ai_gen_id }}" data-dots>
+  {% for i in (0..4) %}
+    {% if i < slide_count %}
+            <button class="ai-popup__dot-{{ ai_gen_id }}{% if i == 0 %} active{% endif %}" data-dot="{{ i }}" aria-label="Go to slide {{ i | plus: 1 }}"></button>
+    {% endif %}
+  {% endfor %}
+          </div>
+{% endif %}
+
 {% if block.settings.show_controls %}
-            <button
-              class="ai-popup-banner__control-{{ ai_gen_id }}"
-              aria-label="Toggle carousel playback"
-              data-control
-            >
-              <svg class="ai-popup-banner__control-icon-{{ ai_gen_id }}" data-pause-icon viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <rect x="6" y="4" width="4" height="16" rx="1"/>
-                <rect x="14" y="4" width="4" height="16" rx="1"/>
-              </svg>
-              <svg class="ai-popup-banner__control-icon-{{ ai_gen_id }}" data-play-icon style="display: none;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            </button>
+          <button
+            class="ai-popup__control-{{ ai_gen_id }}"
+            aria-label="Toggle carousel playback"
+            data-control
+          >
+            <svg class="ai-popup__control-icon-{{ ai_gen_id }}" data-pause-icon viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="4" width="4" height="16" rx="1"/>
+              <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+            <svg class="ai-popup__control-icon-{{ ai_gen_id }}" data-play-icon style="display: none;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
 {% endif %}
         </div>
       </div>
-      <div class="ai-popup-banner__text-column-{{ ai_gen_id }}">
-        <div class="ai-popup-banner__text-content-{{ ai_gen_id }}">
-          <div class="ai-popup-banner__accent-{{ ai_gen_id }}"></div>
+
+      <!-- Text Column -->
+      <div class="ai-popup__text-col-{{ ai_gen_id }}">
+        <div class="ai-popup__text-inner-{{ ai_gen_id }}">
+          <div class="ai-popup__accent-{{ ai_gen_id }}"></div>
 {% if block.settings.pill_text != blank %}
-            <div class="ai-popup-banner__pill-{{ ai_gen_id }}">
-{{ block.settings.pill_text }}
-            </div>
+          <div class="ai-popup__pill-{{ ai_gen_id }}">
+            {{ block.settings.pill_text }}
+          </div>
 {% endif %}
 {% if block.settings.headline != blank %}
-            <h2 class="ai-popup-banner__headline-{{ ai_gen_id }}">
-{{ block.settings.headline }}
-            </h2>
+          <h2 class="ai-popup__headline-{{ ai_gen_id }}">
+            {{ block.settings.headline }}
+          </h2>
 {% endif %}
 {% if block.settings.subtext != blank %}
-            <div class="ai-popup-banner__subtext-{{ ai_gen_id }}">
-{{ block.settings.subtext }}
-            </div>
+          <div class="ai-popup__subtext-{{ ai_gen_id }}">
+            {{ block.settings.subtext }}
+          </div>
 {% endif %}
 {% if block.settings.cta_text != blank and block.settings.cta_link != blank %}
-            <a href="{{ block.settings.cta_link }}" class="ai-popup-banner__cta-{{ ai_gen_id }}">
-{{ block.settings.cta_text }}
-            </a>
+          <a href="{{ block.settings.cta_link }}" class="ai-popup__cta-{{ ai_gen_id }}">
+            {{ block.settings.cta_text }}
+          </a>
 {% endif %}
+          <div class="ai-popup__accent-bottom-{{ ai_gen_id }}"></div>
         </div>
       </div>
+
     </div>
   </div>
 </popup-carousel-{{ ai_gen_id }}>
+
 <script>
 (function() {
   class PopupCarousel{{ ai_gen_id }} extends HTMLElement {
@@ -334,9 +490,14 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       this.isPermanentlyPaused = false;
       this.intervalId = null;
       this.slides = [];
+      this.dots = [];
     }
     connectedCallback() {
-      this.slides = Array.from(this.querySelectorAll('.ai-popup-banner__carousel-slide-{{ ai_gen_id }}'));
+      var isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.php';
+      if (!isHomePage) return;
+
+      this.slides = Array.from(this.querySelectorAll('.ai-popup__slide-{{ ai_gen_id }}'));
+      this.dots = Array.from(this.querySelectorAll('[data-dot]'));
       this.controlButton = this.querySelector('[data-control]');
       this.pauseIcon = this.querySelector('[data-pause-icon]');
       this.playIcon = this.querySelector('[data-play-icon]');
@@ -345,14 +506,15 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       this.interval = parseInt(this.dataset.interval) || 4000;
       this.pauseOnHover = this.dataset.pauseOnHover === 'true';
       this.popupDelay = parseInt(this.dataset.popupDelay) || 1500;
-      var storageKey = 'ai_popup_dismissed_{{ ai_gen_id }}';
-      if (sessionStorage.getItem(storageKey)) return;
-      this.setupCloseListeners(storageKey);
+
+      this.setupCloseListeners();
       if (this.slides.length > 1) {
         this.setupCarouselListeners();
+        this.setupDotListeners();
       } else if (this.controlButton) {
         this.controlButton.style.display = 'none';
       }
+
       setTimeout(function() {
         this.classList.add('is-visible');
         document.body.style.overflow = 'hidden';
@@ -361,40 +523,44 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         }
       }.bind(this), this.popupDelay);
     }
-    setupCloseListeners(storageKey) {
+    setupCloseListeners() {
       var self = this;
       this.closeButton.addEventListener('click', function() {
-        self.closePopup(storageKey);
+        self.closePopup();
       });
       this.addEventListener('click', function(e) {
         if (e.target === self) {
-          self.closePopup(storageKey);
+          self.closePopup();
         }
       });
     }
-    closePopup(storageKey) {
+    closePopup() {
       this.classList.remove('is-visible');
       document.body.style.overflow = '';
       this.clearAutoplay();
-      sessionStorage.setItem(storageKey, '1');
     }
     setupCarouselListeners() {
       if (this.controlButton) {
         this.controlButton.addEventListener('click', this.togglePlayPause.bind(this));
       }
       if (this.pauseOnHover) {
-        var wrapper = this.querySelector('.ai-popup-banner__carousel-wrapper-{{ ai_gen_id }}');
+        var wrapper = this.querySelector('.ai-popup__carousel-wrap-{{ ai_gen_id }}');
         wrapper.addEventListener('mouseenter', function() {
-          if (!this.isPermanentlyPaused) {
-            this.clearAutoplay();
-          }
+          if (!this.isPermanentlyPaused) this.clearAutoplay();
         }.bind(this));
         wrapper.addEventListener('mouseleave', function() {
-          if (!this.isPermanentlyPaused && this.autoplay) {
-            this.startAutoplay();
-          }
+          if (!this.isPermanentlyPaused && this.autoplay) this.startAutoplay();
         }.bind(this));
       }
+    }
+    setupDotListeners() {
+      var self = this;
+      this.dots.forEach(function(dot) {
+        dot.addEventListener('click', function() {
+          var index = parseInt(dot.dataset.dot);
+          self.goToSlide(index);
+        });
+      });
     }
     startAutoplay() {
       this.clearAutoplay();
@@ -406,10 +572,17 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         this.intervalId = null;
       }
     }
-    nextSlide() {
+    goToSlide(index) {
+      if (index === this.currentSlide) return;
       this.slides[this.currentSlide].classList.remove('active');
-      this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+      if (this.dots[this.currentSlide]) this.dots[this.currentSlide].classList.remove('active');
+      this.currentSlide = index;
       this.slides[this.currentSlide].classList.add('active');
+      if (this.dots[this.currentSlide]) this.dots[this.currentSlide].classList.add('active');
+    }
+    nextSlide() {
+      var next = (this.currentSlide + 1) % this.slides.length;
+      this.goToSlide(next);
     }
     togglePlayPause() {
       if (!this.isPermanentlyPaused) {
@@ -441,6 +614,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   customElements.define('popup-carousel-{{ ai_gen_id }}', PopupCarousel{{ ai_gen_id }});
 })();
 </script>
+
 {% schema %}
 {
   "name": "Popup banner carousel",
