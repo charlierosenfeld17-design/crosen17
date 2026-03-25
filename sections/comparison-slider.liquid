@@ -1,0 +1,583 @@
+{% doc %}
+  @prompt
+    before and after image slider, with a centered title and description on top, image centered, thickened slider for mobile accessibility, blinking "Drag To Compare" hint. totallt customiable
+    , add schemes , add paddings top and bottom and text spacing and line spacing , its a comparison, not a before and after
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% style %}
+  .ai-comparison-slider-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: rgb(var(--color-background));
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+  }
+  .ai-comparison-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ block.settings.text_spacing }}px;
+    position: relative;
+    z-index: 2;
+  }
+  .ai-comparison-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: rgb(var(--color-foreground));
+    margin: 0 0 {{ block.settings.title_spacing }}px;
+    line-height: {{ block.settings.title_line_height }};
+  }
+  .ai-comparison-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: rgba(var(--color-foreground), 0.75);
+    margin: 0;
+    line-height: {{ block.settings.description_line_height }};
+  }
+  .ai-comparison-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: {{ block.settings.max_image_width }}px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    isolation: isolate;
+  }
+  .ai-comparison-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: {{ block.settings.aspect_ratio }}%;
+  }
+  .ai-comparison-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ai-comparison-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(var(--color-foreground), 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ai-comparison-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+  .ai-comparison-second-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    clip-path: inset(0 0 0 0);
+  }
+  .ai-comparison-label-{{ ai_gen_id }} {
+    position: absolute;
+    top: 20px;
+    padding: 8px 16px;
+    background-color: rgba(var(--color-button), 1);
+    color: rgb(var(--color-button-text));
+    font-size: {{ block.settings.label_size }}px;
+    font-weight: 600;
+    border-radius: 4px;
+    z-index: 2;
+  }
+  .ai-comparison-label-first-{{ ai_gen_id }} {
+    left: 20px;
+  }
+  .ai-comparison-label-second-{{ ai_gen_id }} {
+    right: 20px;
+  }
+  .ai-comparison-divider-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: {{ block.settings.divider_width }}px;
+    background-color: rgb(var(--color-button));
+    cursor: ew-resize;
+    z-index: 3;
+    transform: translateX(-50%);
+  }
+  .ai-comparison-handle-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: {{ block.settings.handle_size }}px;
+    height: {{ block.settings.handle_size }}px;
+    background-color: rgb(var(--color-button));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(var(--color-shadow), 0.3);
+  }
+  .ai-comparison-handle-{{ ai_gen_id }}::before,
+  .ai-comparison-handle-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+  .ai-comparison-handle-{{ ai_gen_id }}::before {
+    left: 25%;
+    border-width: 8px 8px 8px 0;
+    border-color: transparent rgb(var(--color-button-text)) transparent transparent;
+  }
+  .ai-comparison-handle-{{ ai_gen_id }}::after {
+    right: 25%;
+    border-width: 8px 0 8px 8px;
+    border-color: transparent transparent transparent rgb(var(--color-button-text));
+  }
+  .ai-comparison-hint-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: rgba(var(--color-button), 0.9);
+    color: rgb(var(--color-button-text));
+    font-size: {{ block.settings.hint_size }}px;
+    font-weight: 600;
+    border-radius: 25px;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .ai-comparison-hint-{{ ai_gen_id }}.hidden {
+    opacity: 0;
+  }
+  @keyframes ai-comparison-blink-{{ ai_gen_id }} {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .ai-comparison-hint-{{ ai_gen_id }}.blinking {
+    animation: ai-comparison-blink-{{ ai_gen_id }} 1.5s ease-in-out infinite;
+  }
+  @media screen and (max-width: 749px) {
+    .ai-comparison-slider-{{ ai_gen_id }} {
+      padding-top: {{ block.settings.padding_top | times: 0.7 }}px;
+      padding-bottom: {{ block.settings.padding_bottom | times: 0.7 }}px;
+    }
+    .ai-comparison-divider-{{ ai_gen_id }} {
+      width: {{ block.settings.divider_width | times: 1.5 }}px;
+    }
+    .ai-comparison-handle-{{ ai_gen_id }} {
+      width: {{ block.settings.handle_size | times: 1.2 }}px;
+      height: {{ block.settings.handle_size | times: 1.2 }}px;
+    }
+    .ai-comparison-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+    .ai-comparison-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size | times: 0.9 }}px;
+    }
+    .ai-comparison-header-{{ ai_gen_id }} {
+      margin-bottom: {{ block.settings.text_spacing | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+<comparison-slider-{{ ai_gen_id }} class="ai-comparison-slider-{{ ai_gen_id }} color-{{ block.settings.color_scheme }}" {{ block.shopify_attributes }}>
+{% if block.settings.title != blank or block.settings.description != blank %}
+    <div class="ai-comparison-header-{{ ai_gen_id }}">
+{% if block.settings.title != blank %}
+        <h2 class="ai-comparison-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+{% endif %}
+{% if block.settings.description != blank %}
+        <div class="ai-comparison-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+{% endif %}
+    </div>
+{% endif %}
+  <div class="ai-comparison-container-{{ ai_gen_id }}">
+    <div class="ai-comparison-image-wrapper-{{ ai_gen_id }}">
+{% if block.settings.first_image %}
+        <img
+          src="{{ block.settings.first_image | image_url: width: 2000 }}"
+          alt="{{ block.settings.first_label | escape }}"
+          class="ai-comparison-image-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ block.settings.first_image.width }}"
+          height="{{ block.settings.first_image.height }}"
+        >
+{% else %}
+        <div class="ai-comparison-placeholder-{{ ai_gen_id }}">
+{{ 'image' | placeholder_svg_tag }}
+        </div>
+{% endif %}
+{% if block.settings.show_labels %}
+        <div class="ai-comparison-label-{{ ai_gen_id }} ai-comparison-label-first-{{ ai_gen_id }}">
+{{ block.settings.first_label }}
+        </div>
+{% endif %}
+      <div class="ai-comparison-second-wrapper-{{ ai_gen_id }}" data-second-wrapper>
+{% if block.settings.second_image %}
+          <img
+            src="{{ block.settings.second_image | image_url: width: 2000 }}"
+            alt="{{ block.settings.second_label | escape }}"
+            class="ai-comparison-image-{{ ai_gen_id }}"
+            loading="lazy"
+            width="{{ block.settings.second_image.width }}"
+            height="{{ block.settings.second_image.height }}"
+          >
+{% else %}
+          <div class="ai-comparison-placeholder-{{ ai_gen_id }}">
+{{ 'image' | placeholder_svg_tag }}
+          </div>
+{% endif %}
+{% if block.settings.show_labels %}
+          <div class="ai-comparison-label-{{ ai_gen_id }} ai-comparison-label-second-{{ ai_gen_id }}">
+{{ block.settings.second_label }}
+          </div>
+{% endif %}
+      </div>
+      <div class="ai-comparison-divider-{{ ai_gen_id }}" data-divider>
+        <div class="ai-comparison-handle-{{ ai_gen_id }}"></div>
+      </div>
+{% if block.settings.show_hint %}
+        <div class="ai-comparison-hint-{{ ai_gen_id }} blinking" data-hint>
+{{ block.settings.hint_text }}
+        </div>
+{% endif %}
+    </div>
+  </div>
+</comparison-slider-{{ ai_gen_id }}>
+<script>
+  (function() {
+    class ComparisonSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.isDragging = false;
+        this.hasInteracted = false;
+      }
+      connectedCallback() {
+        this.container = this.querySelector('.ai-comparison-container-{{ ai_gen_id }}');
+        this.divider = this.querySelector('[data-divider]');
+        this.secondWrapper = this.querySelector('[data-second-wrapper]');
+        this.hint = this.querySelector('[data-hint]');
+        if (!this.container || !this.divider || !this.secondWrapper) return;
+        this.setupEventListeners();
+        this.updatePosition({{ block.settings.initial_position }});
+      }
+      setupEventListeners() {
+        this.divider.addEventListener('mousedown', this.startDrag.bind(this));
+        this.divider.addEventListener('touchstart', this.startDrag.bind(this), { passive: true });
+        document.addEventListener('mousemove', this.onDrag.bind(this));
+        document.addEventListener('touchmove', this.onDrag.bind(this), { passive: false });
+        document.addEventListener('mouseup', this.stopDrag.bind(this));
+        document.addEventListener('touchend', this.stopDrag.bind(this));
+        this.container.addEventListener('click', this.onContainerClick.bind(this));
+      }
+      startDrag(e) {
+        this.isDragging = true;
+        this.hideHint();
+        e.preventDefault();
+      }
+      onDrag(e) {
+        if (!this.isDragging) return;
+        e.preventDefault();
+        const rect = this.container.getBoundingClientRect();
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const x = clientX - rect.left;
+        const percentage = (x / rect.width) * 100;
+        this.updatePosition(Math.max(0, Math.min(100, percentage)));
+      }
+      stopDrag() {
+        this.isDragging = false;
+      }
+      onContainerClick(e) {
+        if (e.target === this.divider || this.divider.contains(e.target)) return;
+        const rect = this.container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percentage = (x / rect.width) * 100;
+        this.updatePosition(Math.max(0, Math.min(100, percentage)));
+        this.hideHint();
+      }
+      updatePosition(percentage) {
+        this.divider.style.left = percentage + '%';
+        this.secondWrapper.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+      }
+      hideHint() {
+        if (this.hint && !this.hasInteracted) {
+          this.hasInteracted = true;
+          this.hint.classList.remove('blinking');
+          this.hint.classList.add('hidden');
+        }
+      }
+    }
+    customElements.define('comparison-slider-{{ ai_gen_id }}', ComparisonSlider{{ ai_gen_id }});
+  })();
+</script>
+{% schema %}
+{
+  "name": "Comparison slider",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<p>Compare the difference</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Drag the slider to see the comparison</p>"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Title spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "label": "Text to image spacing",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "title_line_height",
+      "label": "Title line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "description_line_height",
+      "label": "Description line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "first_image",
+      "label": "First image"
+    },
+    {
+      "type": "image_picker",
+      "id": "second_image",
+      "label": "Second image"
+    },
+    {
+      "type": "range",
+      "id": "max_image_width",
+      "label": "Maximum image width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "default": 75
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_labels",
+      "label": "Show labels",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "first_label",
+      "label": "First label",
+      "default": "Option 1"
+    },
+    {
+      "type": "text",
+      "id": "second_label",
+      "label": "Second label",
+      "default": "Option 2"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "range",
+      "id": "initial_position",
+      "label": "Initial position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "Divider width",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "handle_size",
+      "label": "Handle size",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Hint"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hint",
+      "label": "Show hint",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hint_text",
+      "label": "Hint text",
+      "default": "Drag to compare"
+    },
+    {
+      "type": "range",
+      "id": "hint_size",
+      "label": "Hint size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison slider"
+    }
+  ]
+}
+{% endschema %}
