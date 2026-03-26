@@ -1,6 +1,7 @@
 {% doc %}
 @prompt
 Luxury editorial popup banner — left image carousel, right text with generous whitespace and decorative accents.
+Shows on every landing page on first visit, then reappears every 3 minutes on page navigation.
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 {% style %}
@@ -12,84 +13,111 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.55);
   z-index: 9999;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 .ai-popup-banner-overlay-{{ ai_gen_id }}.is-visible {
   display: flex;
   opacity: 1;
 }
+
+/* ── POPUP CONTAINER ── */
 .ai-popup-banner-{{ ai_gen_id }} {
   position: relative;
-  width: 92%;
-  max-width: 420px;
-  max-height: 90vh;
-  overflow-y: auto;
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
   background-color: {{ block.settings.background_color }};
-  border-radius: 8px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  animation: ai-popup-slide-up-{{ ai_gen_id }} 0.4s ease-out;
+  animation: ai-popup-fade-in-{{ ai_gen_id }} 0.5s ease-out;
+  display: flex;
+  flex-direction: column;
 }
-@keyframes ai-popup-slide-up-{{ ai_gen_id }} {
+@media (min-width: 768px) {
+  .ai-popup-banner-{{ ai_gen_id }} {
+    width: 92%;
+    max-width: 440px;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 10px;
+  }
+}
+@keyframes ai-popup-fade-in-{{ ai_gen_id }} {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: scale(0.97) translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 }
+
 /* ── CLOSE BUTTON ── */
 .ai-popup-banner__close-{{ ai_gen_id }} {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border: none;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 20;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .ai-popup-banner__close-{{ ai_gen_id }}:hover {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
 }
 .ai-popup-banner__close-{{ ai_gen_id }} svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   stroke: #ffffff;
   stroke-width: 2;
   fill: none;
 }
+
+/* ── GRID ── */
 .ai-popup-banner__grid-{{ ai_gen_id }} {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
-/* ── LEFT: Carousel ── */
+
+/* ── CAROUSEL ── */
 .ai-popup-banner__carousel-column-{{ ai_gen_id }} {
   position: relative;
   width: 100%;
   overflow: hidden;
+  flex: 1;
+  min-height: 0;
 }
 .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
   position: relative;
   width: 100%;
-  aspect-ratio: {{ block.settings.carousel_aspect_ratio }};
+  height: 100%;
   overflow: hidden;
   background-color: {{ block.settings.background_color }};
-  border-radius: 8px 8px 0 0;
+}
+@media (min-width: 768px) {
+  .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
+    aspect-ratio: {{ block.settings.carousel_aspect_ratio }};
+    height: auto;
+    border-radius: 10px 10px 0 0;
+  }
 }
 .ai-popup-banner__carousel-track-{{ ai_gen_id }} {
   position: relative;
@@ -153,27 +181,37 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   height: 50%;
   fill: {{ block.settings.control_icon_color }};
 }
-/* ── RIGHT: Text ── */
+
+/* ── TEXT COLUMN ── */
 .ai-popup-banner__text-column-{{ ai_gen_id }} {
   background-color: {{ block.settings.background_color }};
-  padding: {{ block.settings.text_padding_mobile }}px {{ block.settings.mobile_side_padding }}px;
+  padding: 24px {{ block.settings.mobile_side_padding }}px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .ai-popup-banner__text-column-{{ ai_gen_id }} {
+    padding: {{ block.settings.text_padding_mobile }}px {{ block.settings.mobile_side_padding }}px;
+  }
 }
 .ai-popup-banner__text-content-{{ ai_gen_id }} {
   max-width: 100%;
   text-align: center;
 }
+
 /* Decorative accent line */
 .ai-popup-banner__accent-{{ ai_gen_id }} {
-  width: 48px;
+  width: 40px;
   height: 1px;
   background-color: {{ block.settings.headline_color }};
-  margin: 0 auto {{ block.settings.pill_margin_bottom }}px auto;
-  opacity: 0.25;
+  margin: 0 auto 16px auto;
+  opacity: 0.2;
 }
+
+/* Pill / tag */
 .ai-popup-banner__pill-{{ ai_gen_id }} {
   display: inline-block;
   background-color: {{ block.settings.pill_bg_color }};
@@ -182,59 +220,55 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   font-size: {{ block.settings.pill_font_size }}px;
   text-transform: uppercase;
   letter-spacing: {{ block.settings.pill_letter_spacing }}px;
-  font-weight: 600;
+  font-weight: 500;
   border-radius: {{ block.settings.pill_border_radius }}px;
-  margin-bottom: {{ block.settings.pill_margin_bottom }}px;
+  margin-bottom: 16px;
 }
+
+/* Headline — modern mixed-case style */
 .ai-popup-banner__headline-{{ ai_gen_id }} {
-  font-size: {{ block.settings.headline_font_size_mobile }}px;
+  font-size: clamp(22px, 5.5vw, {{ block.settings.headline_font_size_mobile }}px);
   line-height: {{ block.settings.headline_line_height }};
   color: {{ block.settings.headline_color }};
-  text-transform: uppercase;
   font-weight: {{ block.settings.headline_font_weight }};
-  margin: 0 0 {{ block.settings.headline_margin_bottom }}px 0;
-  letter-spacing: {{ block.settings.headline_letter_spacing }}px;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.01em;
   text-align: center;
+  font-style: normal;
 }
+
+/* Subtext */
 .ai-popup-banner__subtext-{{ ai_gen_id }} {
   font-size: {{ block.settings.subtext_font_size }}px;
   color: {{ block.settings.subtext_color }};
-  margin: 0 0 {{ block.settings.subtext_margin_bottom }}px 0;
-  font-weight: 400;
+  margin: 0 0 20px 0;
+  font-weight: 300;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 .ai-popup-banner__subtext-{{ ai_gen_id }} a {
   text-decoration: underline;
+  text-underline-offset: 2px;
   color: {{ block.settings.subtext_color }};
 }
+
+/* CTA button — modern filled style */
 .ai-popup-banner__cta-{{ ai_gen_id }} {
   display: inline-block;
   font-size: {{ block.settings.cta_font_size }}px;
-  color: {{ block.settings.cta_color }};
+  color: {{ block.settings.background_color }};
+  background-color: {{ block.settings.cta_color }};
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: {{ block.settings.cta_letter_spacing }}px;
   font-weight: 500;
-  position: relative;
-  padding-bottom: 3px;
-  transition: opacity 0.3s ease;
-}
-.ai-popup-banner__cta-{{ ai_gen_id }}::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: {{ block.settings.cta_color }};
-  transition: transform 0.35s ease;
-  transform-origin: left;
+  padding: 14px 36px;
+  border: none;
+  transition: opacity 0.3s ease, transform 0.2s ease;
 }
 .ai-popup-banner__cta-{{ ai_gen_id }}:hover {
-  opacity: 0.7;
-}
-.ai-popup-banner__cta-{{ ai_gen_id }}:hover::after {
-  transform: scaleX(0);
-  transform-origin: right;
+  opacity: 0.85;
+  transform: translateY(-1px);
 }
 {% endstyle %}
 <popup-carousel-{{ ai_gen_id }}
@@ -243,6 +277,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   data-interval="{{ block.settings.autoplay_interval }}"
   data-pause-on-hover="{{ block.settings.pause_on_hover }}"
   data-popup-delay="{{ block.settings.popup_delay }}"
+  data-reshow-interval="{{ block.settings.reshow_interval }}"
 {{ block.shopify_attributes }}
 >
   <div class="ai-popup-banner-{{ ai_gen_id }}">
@@ -327,6 +362,8 @@ Luxury editorial popup banner — left image carousel, right text with generous 
 </popup-carousel-{{ ai_gen_id }}>
 <script>
 (function() {
+  var STORAGE_KEY = 'ai_popup_dismissed_{{ ai_gen_id }}';
+
   class PopupCarousel{{ ai_gen_id }} extends HTMLElement {
     constructor() {
       super();
@@ -335,6 +372,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       this.intervalId = null;
       this.slides = [];
     }
+
     connectedCallback() {
       this.slides = Array.from(this.querySelectorAll('.ai-popup-banner__carousel-slide-{{ ai_gen_id }}'));
       this.controlButton = this.querySelector('[data-control]');
@@ -345,14 +383,27 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       this.interval = parseInt(this.dataset.interval) || 4000;
       this.pauseOnHover = this.dataset.pauseOnHover === 'true';
       this.popupDelay = parseInt(this.dataset.popupDelay) || 1500;
-      var storageKey = 'ai_popup_dismissed_{{ ai_gen_id }}';
-      if (sessionStorage.getItem(storageKey)) return;
-      this.setupCloseListeners(storageKey);
+      this.reshowInterval = parseInt(this.dataset.reshowInterval) || 180000;
+
+      /* ── Recurring popup logic ──
+         First visit: always show.
+         After dismiss: store timestamp. On next page load (navigation),
+         show again only if 3 min (reshowInterval) have elapsed. */
+      var lastDismissed = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+      var now = Date.now();
+
+      if (lastDismissed && (now - lastDismissed < this.reshowInterval)) {
+        return; /* too soon, don't show */
+      }
+
+      this.setupCloseListeners();
+
       if (this.slides.length > 1) {
         this.setupCarouselListeners();
       } else if (this.controlButton) {
         this.controlButton.style.display = 'none';
       }
+
       setTimeout(function() {
         this.classList.add('is-visible');
         document.body.style.overflow = 'hidden';
@@ -361,23 +412,27 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         }
       }.bind(this), this.popupDelay);
     }
-    setupCloseListeners(storageKey) {
+
+    setupCloseListeners() {
       var self = this;
       this.closeButton.addEventListener('click', function() {
-        self.closePopup(storageKey);
+        self.closePopup();
       });
       this.addEventListener('click', function(e) {
         if (e.target === self) {
-          self.closePopup(storageKey);
+          self.closePopup();
         }
       });
     }
-    closePopup(storageKey) {
+
+    closePopup() {
       this.classList.remove('is-visible');
       document.body.style.overflow = '';
       this.clearAutoplay();
-      sessionStorage.setItem(storageKey, '1');
+      /* Store dismiss timestamp so it can reappear after reshowInterval */
+      localStorage.setItem(STORAGE_KEY, String(Date.now()));
     }
+
     setupCarouselListeners() {
       if (this.controlButton) {
         this.controlButton.addEventListener('click', this.togglePlayPause.bind(this));
@@ -396,21 +451,25 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         }.bind(this));
       }
     }
+
     startAutoplay() {
       this.clearAutoplay();
       this.intervalId = setInterval(this.nextSlide.bind(this), this.interval);
     }
+
     clearAutoplay() {
       if (this.intervalId) {
         clearInterval(this.intervalId);
         this.intervalId = null;
       }
     }
+
     nextSlide() {
       this.slides[this.currentSlide].classList.remove('active');
       this.currentSlide = (this.currentSlide + 1) % this.slides.length;
       this.slides[this.currentSlide].classList.add('active');
     }
+
     togglePlayPause() {
       if (!this.isPermanentlyPaused) {
         this.manualPause();
@@ -418,26 +477,31 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         this.manualPlay();
       }
     }
+
     manualPause() {
       this.isPermanentlyPaused = true;
       this.clearAutoplay();
       this.updateControlIcons(false);
     }
+
     manualPlay() {
       this.isPermanentlyPaused = false;
       this.startAutoplay();
       this.updateControlIcons(true);
     }
+
     updateControlIcons(playing) {
       if (this.pauseIcon && this.playIcon) {
         this.pauseIcon.style.display = playing ? 'block' : 'none';
         this.playIcon.style.display = playing ? 'none' : 'block';
       }
     }
+
     disconnectedCallback() {
       this.clearAutoplay();
     }
   }
+
   customElements.define('popup-carousel-{{ ai_gen_id }}', PopupCarousel{{ ai_gen_id }});
 })();
 </script>
@@ -459,6 +523,16 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       "unit": "ms",
       "label": "Popup delay",
       "default": 1500
+    },
+    {
+      "type": "range",
+      "id": "reshow_interval",
+      "min": 60000,
+      "max": 600000,
+      "step": 60000,
+      "unit": "ms",
+      "label": "Reshow after (minutes)",
+      "default": 180000
     },
     {
       "type": "header",
@@ -696,7 +770,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       "type": "textarea",
       "id": "headline",
       "label": "Headline",
-      "default": "SALE: UP TO 50% OFF\nSELECT STYLES"
+      "default": "Up to 50% Off\nSelect Styles"
     },
     {
       "type": "color",
@@ -712,7 +786,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       "step": 2,
       "unit": "px",
       "label": "Headline size",
-      "default": 34
+      "default": 30
     },
     {
       "type": "range",
@@ -721,7 +795,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       "max": 1.5,
       "step": 0.1,
       "label": "Headline line height",
-      "default": 1.1
+      "default": 1.2
     },
     {
       "type": "select",
@@ -733,7 +807,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
         { "value": "600", "label": "Semi-bold" },
         { "value": "700", "label": "Bold" }
       ],
-      "default": "700"
+      "default": "500"
     },
     {
       "type": "range",
@@ -812,7 +886,7 @@ Luxury editorial popup banner — left image carousel, right text with generous 
       "step": 1,
       "unit": "px",
       "label": "CTA font size",
-      "default": 14
+      "default": 13
     },
     {
       "type": "range",
