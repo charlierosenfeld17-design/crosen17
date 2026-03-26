@@ -391,17 +391,7 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       this.pauseOnHover = this.dataset.pauseOnHover === 'true';
       this.popupDelay = parseInt(this.dataset.popupDelay) || 1500;
       this.reshowInterval = (parseInt(this.dataset.reshowInterval) || 3) * 60000;
-
-      /* ── Recurring popup logic ──
-         First visit: always show.
-         After dismiss: store timestamp. On next page load (navigation),
-         show again only if 3 min (reshowInterval) have elapsed. */
-      var lastDismissed = parseInt(localStorage.getItem(STORAGE_KEY), 10);
-      var now = Date.now();
-
-      if (lastDismissed && (now - lastDismissed < this.reshowInterval)) {
-        return; /* too soon, don't show */
-      }
+      this.reshowTimerId = null;
 
       this.setupCloseListeners();
 
@@ -411,13 +401,23 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
         this.controlButton.style.display = 'none';
       }
 
-      setTimeout(function() {
-        this.classList.add('is-visible');
-        document.body.style.overflow = 'hidden';
-        if (this.slides.length > 1 && this.autoplay) {
-          this.startAutoplay();
-        }
-      }.bind(this), this.popupDelay);
+      /* ── Recurring popup logic ──
+         First visit on any page: always show immediately.
+         After dismiss: re-show after reshowInterval (default 3 min)
+         on the same page — no navigation required. On new page loads
+         it also checks the stored timestamp. */
+      var lastDismissed = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+      var now = Date.now();
+
+      if (lastDismissed && (now - lastDismissed < this.reshowInterval)) {
+        /* Dismissed recently — schedule reshow for remaining time */
+        var remaining = this.reshowInterval - (now - lastDismissed);
+        this.scheduleReshow(remaining);
+        return;
+      }
+
+      /* First visit or enough time has passed — show now */
+      this.showPopup();
     }
 
     setupCloseListeners() {
@@ -432,6 +432,29 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       });
     }
 
+    showPopup() {
+      var self = this;
+      setTimeout(function() {
+        self.classList.add('is-visible');
+        document.body.style.overflow = 'hidden';
+        if (self.slides.length > 1 && self.autoplay) {
+          self.startAutoplay();
+        }
+      }, this.popupDelay);
+    }
+
+    scheduleReshow(delay) {
+      var self = this;
+      if (this.reshowTimerId) clearTimeout(this.reshowTimerId);
+      this.reshowTimerId = setTimeout(function() {
+        self.currentSlide = 0;
+        self.slides.forEach(function(s, i) {
+          s.classList.toggle('active', i === 0);
+        });
+        self.showPopup();
+      }, delay);
+    }
+
     closePopup() {
       var self = this;
       this.classList.add('is-closing');
@@ -440,6 +463,8 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       setTimeout(function() {
         self.classList.remove('is-visible', 'is-closing');
         document.body.style.overflow = '';
+        /* Schedule the popup to reappear after reshowInterval */
+        self.scheduleReshow(self.reshowInterval);
       }, 600);
     }
 
@@ -509,6 +534,7 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
 
     disconnectedCallback() {
       this.clearAutoplay();
+      if (this.reshowTimerId) clearTimeout(this.reshowTimerId);
     }
   }
 
