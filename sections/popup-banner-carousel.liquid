@@ -27,8 +27,9 @@ Luxury editorial popup banner — left image carousel, right text with generous 
   position: relative;
   width: 92%;
   max-width: 420px;
-  max-height: 90vh;
+  max-height: 70vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background-color: {{ block.settings.background_color }};
   border-radius: 8px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
@@ -86,10 +87,15 @@ Luxury editorial popup banner — left image carousel, right text with generous 
 .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
   position: relative;
   width: 100%;
-  aspect-ratio: {{ block.settings.carousel_aspect_ratio }};
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background-color: {{ block.settings.background_color }};
   border-radius: 8px 8px 0 0;
+}
+@media (min-width: 768px) {
+  .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
+    aspect-ratio: {{ block.settings.carousel_aspect_ratio }};
+  }
 }
 .ai-popup-banner__carousel-track-{{ ai_gen_id }} {
   position: relative;
@@ -156,11 +162,16 @@ Luxury editorial popup banner — left image carousel, right text with generous 
 /* ── RIGHT: Text ── */
 .ai-popup-banner__text-column-{{ ai_gen_id }} {
   background-color: {{ block.settings.background_color }};
-  padding: {{ block.settings.text_padding_mobile }}px {{ block.settings.mobile_side_padding }}px;
+  padding: 20px {{ block.settings.mobile_side_padding }}px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+@media (min-width: 768px) {
+  .ai-popup-banner__text-column-{{ ai_gen_id }} {
+    padding: {{ block.settings.text_padding_mobile }}px {{ block.settings.mobile_side_padding }}px;
+  }
 }
 .ai-popup-banner__text-content-{{ ai_gen_id }} {
   max-width: 100%;
