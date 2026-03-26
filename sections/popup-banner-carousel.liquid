@@ -371,16 +371,33 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
 (function() {
   var STORAGE_KEY = 'ai_popup_dismissed_{{ ai_gen_id }}';
 
+  /* Safe localStorage wrapper — Instagram in-app browser, some
+     mobile webviews, and iframe previews may block storage access. */
+  function storageGet(key) {
+    try { return localStorage.getItem(key); } catch(e) { return null; }
+  }
+  function storageSet(key, val) {
+    try { localStorage.setItem(key, val); } catch(e) { /* silent */ }
+  }
+
   class PopupCarousel{{ ai_gen_id }} extends HTMLElement {
     constructor() {
       super();
       this.currentSlide = 0;
       this.isPermanentlyPaused = false;
       this.intervalId = null;
+      this.reshowTimerId = null;
       this.slides = [];
+      this._initialized = false;
     }
 
     connectedCallback() {
+      if (this._initialized) return;
+      this._initialized = true;
+      this.init();
+    }
+
+    init() {
       this.slides = Array.from(this.querySelectorAll('.ai-popup-banner__carousel-slide-{{ ai_gen_id }}'));
       this.controlButton = this.querySelector('[data-control]');
       this.pauseIcon = this.querySelector('[data-pause-icon]');
@@ -391,7 +408,8 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       this.pauseOnHover = this.dataset.pauseOnHover === 'true';
       this.popupDelay = parseInt(this.dataset.popupDelay) || 1500;
       this.reshowInterval = (parseInt(this.dataset.reshowInterval) || 3) * 60000;
-      this.reshowTimerId = null;
+
+      if (!this.closeButton || !this.slides.length) return;
 
       this.setupCloseListeners();
 
@@ -402,21 +420,19 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       }
 
       /* ── Recurring popup logic ──
-         First visit on any page: always show immediately.
+         First visit on any page: always show.
          After dismiss: re-show after reshowInterval (default 3 min)
-         on the same page — no navigation required. On new page loads
-         it also checks the stored timestamp. */
-      var lastDismissed = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+         on the same page — no navigation needed.
+         If localStorage is blocked (Instagram, previews), always show. */
+      var lastDismissed = parseInt(storageGet(STORAGE_KEY), 10);
       var now = Date.now();
 
       if (lastDismissed && (now - lastDismissed < this.reshowInterval)) {
-        /* Dismissed recently — schedule reshow for remaining time */
         var remaining = this.reshowInterval - (now - lastDismissed);
         this.scheduleReshow(remaining);
         return;
       }
 
-      /* First visit or enough time has passed — show now */
       this.showPopup();
     }
 
@@ -459,11 +475,10 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       var self = this;
       this.classList.add('is-closing');
       this.clearAutoplay();
-      localStorage.setItem(STORAGE_KEY, String(Date.now()));
+      storageSet(STORAGE_KEY, String(Date.now()));
       setTimeout(function() {
         self.classList.remove('is-visible', 'is-closing');
         document.body.style.overflow = '';
-        /* Schedule the popup to reappear after reshowInterval */
         self.scheduleReshow(self.reshowInterval);
       }, 600);
     }
@@ -474,16 +489,18 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       }
       if (this.pauseOnHover) {
         var wrapper = this.querySelector('.ai-popup-banner__carousel-wrapper-{{ ai_gen_id }}');
-        wrapper.addEventListener('mouseenter', function() {
-          if (!this.isPermanentlyPaused) {
-            this.clearAutoplay();
-          }
-        }.bind(this));
-        wrapper.addEventListener('mouseleave', function() {
-          if (!this.isPermanentlyPaused && this.autoplay) {
-            this.startAutoplay();
-          }
-        }.bind(this));
+        if (wrapper) {
+          wrapper.addEventListener('mouseenter', function() {
+            if (!this.isPermanentlyPaused) {
+              this.clearAutoplay();
+            }
+          }.bind(this));
+          wrapper.addEventListener('mouseleave', function() {
+            if (!this.isPermanentlyPaused && this.autoplay) {
+              this.startAutoplay();
+            }
+          }.bind(this));
+        }
       }
     }
 
@@ -538,7 +555,25 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
     }
   }
 
-  customElements.define('popup-carousel-{{ ai_gen_id }}', PopupCarousel{{ ai_gen_id }});
+  /* Register the custom element */
+  if (!customElements.get('popup-carousel-{{ ai_gen_id }}')) {
+    customElements.define('popup-carousel-{{ ai_gen_id }}', PopupCarousel{{ ai_gen_id }});
+  }
+
+  /* Fallback: if connectedCallback didn't fire (iframe previews,
+     some in-app browsers), manually init after DOM is ready. */
+  function fallbackInit() {
+    var el = document.querySelector('popup-carousel-{{ ai_gen_id }}');
+    if (el && !el._initialized) {
+      el._initialized = true;
+      el.init();
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fallbackInit);
+  } else {
+    setTimeout(fallbackInit, 0);
+  }
 })();
 </script>
 {% schema %}
