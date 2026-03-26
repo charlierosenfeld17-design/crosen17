@@ -383,7 +383,7 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
       this.interval = parseInt(this.dataset.interval) || 4000;
       this.pauseOnHover = this.dataset.pauseOnHover === 'true';
       this.popupDelay = parseInt(this.dataset.popupDelay) || 1500;
-      this.reshowInterval = parseInt(this.dataset.reshowInterval) || 180000;
+      this.reshowInterval = (parseInt(this.dataset.reshowInterval) || 3) * 60000;
 
       /* ── Recurring popup logic ──
          First visit: always show.
@@ -527,12 +527,12 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
     {
       "type": "range",
       "id": "reshow_interval",
-      "min": 60000,
-      "max": 600000,
-      "step": 60000,
-      "unit": "ms",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "min",
       "label": "Reshow after (minutes)",
-      "default": 180000
+      "default": 3
     },
     {
       "type": "header",
