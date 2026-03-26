@@ -29,8 +29,20 @@ body {
   cursor: none;
 }
 
-/* Override Shopify theme background — only this page section, not header or sections below */
-.hero, .reveal-section, .site-footer,
+/*
+  Override Shopify theme background for the page content area.
+  Targets the wrapping Shopify sections/containers around page content
+  but NOT the header or announcement bar (which live outside #MainContent).
+  The footer section below the page is excluded via :not selectors.
+*/
+#MainContent {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+}
+#MainContent .shopify-section {
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+}
 .success-overlay {
   background-color: var(--bg);
 }
@@ -40,35 +52,37 @@ body {
   position: fixed;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--text);
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
   transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
   transform: translate(-50%, -50%);
   opacity: 0;
+  mix-blend-mode: difference;
 }
 .cursor-inner {
   position: fixed;
   width: 6px;
   height: 6px;
-  background: var(--accent);
+  background: #FFFFFF;
   border-radius: 50%;
   pointer-events: none;
   z-index: 10001;
   transform: translate(-50%, -50%);
-  transition: transform 0.08s ease, background 0.3s ease, width 0.3s ease, height 0.3s ease;
+  transition: background 0.3s ease, width 0.3s ease, height 0.3s ease;
   opacity: 0;
+  mix-blend-mode: difference;
 }
 .cursor-outer.active {
   width: 60px;
   height: 60px;
-  border-color: var(--accent-light);
+  border-color: #FFFFFF;
 }
 .cursor-inner.active {
   width: 10px;
   height: 10px;
-  background: var(--accent-light);
+  background: #FFFFFF;
 }
 
 /* ── Floating Particles ── */
