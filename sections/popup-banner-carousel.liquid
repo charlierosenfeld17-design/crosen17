@@ -13,30 +13,40 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: rgba(0, 0, 0, 0.45);
   z-index: 9999;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.4s ease;
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
 }
 .ai-popup-banner-overlay-{{ ai_gen_id }}.is-visible {
   display: flex;
   opacity: 1;
 }
+.ai-popup-banner-overlay-{{ ai_gen_id }}.is-closing {
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ai-popup-banner-overlay-{{ ai_gen_id }}.is-closing .ai-popup-banner-{{ ai_gen_id }} {
+  transform: scale(0.96) translateY(10px);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+}
 
 /* ── POPUP CONTAINER ── */
 .ai-popup-banner-{{ ai_gen_id }} {
   position: relative;
-  width: 100%;
-  height: 100dvh;
-  max-height: 100dvh;
+  width: 88%;
+  max-width: 380px;
+  max-height: 85dvh;
   overflow: hidden;
   background-color: {{ block.settings.background_color }};
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  animation: ai-popup-fade-in-{{ ai_gen_id }} 0.5s ease-out;
+  border-radius: 6px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: ai-popup-fade-in-{{ ai_gen_id }} 1s cubic-bezier(0.16, 1, 0.3, 1) both;
   display: flex;
   flex-direction: column;
 }
@@ -44,7 +54,6 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
   .ai-popup-banner-{{ ai_gen_id }} {
     width: 92%;
     max-width: 440px;
-    height: auto;
     max-height: 90vh;
     border-radius: 10px;
   }
@@ -52,7 +61,7 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
 @keyframes ai-popup-fade-in-{{ ai_gen_id }} {
   from {
     opacity: 0;
-    transform: scale(0.97) translateY(12px);
+    transform: scale(0.94) translateY(20px);
   }
   to {
     opacity: 1;
@@ -102,20 +111,18 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
   position: relative;
   width: 100%;
   overflow: hidden;
-  flex: 1;
-  min-height: 0;
 }
 .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
   position: relative;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background-color: {{ block.settings.background_color }};
+  border-radius: 6px 6px 0 0;
 }
 @media (min-width: 768px) {
   .ai-popup-banner__carousel-wrapper-{{ ai_gen_id }} {
     aspect-ratio: {{ block.settings.carousel_aspect_ratio }};
-    height: auto;
     border-radius: 10px 10px 0 0;
   }
 }
@@ -426,11 +433,14 @@ Shows on every landing page on first visit, then reappears every 3 minutes on pa
     }
 
     closePopup() {
-      this.classList.remove('is-visible');
-      document.body.style.overflow = '';
+      var self = this;
+      this.classList.add('is-closing');
       this.clearAutoplay();
-      /* Store dismiss timestamp so it can reappear after reshowInterval */
       localStorage.setItem(STORAGE_KEY, String(Date.now()));
+      setTimeout(function() {
+        self.classList.remove('is-visible', 'is-closing');
+        document.body.style.overflow = '';
+      }, 600);
     }
 
     setupCarouselListeners() {
