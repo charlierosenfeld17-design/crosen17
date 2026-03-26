@@ -20,13 +20,21 @@
   --glass-border: rgba(201, 169, 110, 0.15);
 }
 
-body {
+body, html {
   font-family: 'EB Garamond', serif;
-  background: var(--soft-black);
+  background: var(--soft-black) !important;
+  background-color: var(--soft-black) !important;
   color: var(--ivory);
   min-height: 100vh;
   overflow-x: hidden;
   cursor: none;
+}
+/* Override Shopify theme background */
+.main-content, .template-page, #MainContent, main, .page-width,
+.shopify-section, .shopify-section-template--page,
+[role="main"], .content-for-layout {
+  background: var(--soft-black) !important;
+  background-color: var(--soft-black) !important;
 }
 
 /* Custom Cursor */
@@ -88,41 +96,6 @@ body {
   transition: left 0.8s ease, top 0.8s ease;
 }
 
-/* Top Navigation Bar */
-.nav-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 20px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  backdrop-filter: blur(20px);
-  background: rgba(13, 13, 13, 0.7);
-  border-bottom: 1px solid var(--glass-border);
-  transform: translateY(-100%);
-  animation: slideNavIn 1s ease 0.5s forwards;
-}
-@keyframes slideNavIn {
-  to { transform: translateY(0); }
-}
-.nav-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--gold);
-  font-weight: 500;
-}
-.nav-status {
-  font-size: 0.8rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(201, 169, 110, 0.8);
-}
-
 /* Hero Section */
 .hero {
   position: relative;
@@ -132,7 +105,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 120px 24px 80px;
+  padding: 80px 24px 80px;
   z-index: 1;
 }
 .hero-badge {
@@ -594,9 +567,6 @@ textarea {
   form {
     padding: 32px 24px;
   }
-  .nav-bar {
-    padding: 16px 20px;
-  }
   .hero h1 {
     font-size: 2.2rem;
   }
@@ -633,12 +603,6 @@ input:focus, textarea:focus {
 
 <!-- Floating Particles -->
 <canvas class="particles-canvas" id="particlesCanvas"></canvas>
-
-<!-- Navigation -->
-<nav class="nav-bar">
-  <div class="nav-logo">Northstone</div>
-  <div class="nav-status">Applications Open</div>
-</nav>
 
 <!-- Hero Section -->
 <section class="hero">
