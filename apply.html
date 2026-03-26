@@ -52,14 +52,13 @@ body {
   position: fixed;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--text);
+  border: 1.5px solid #FFFFFF;
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
   transform: translate(-50%, -50%);
   opacity: 0;
-  mix-blend-mode: difference;
 }
 .cursor-inner {
   position: fixed;
@@ -72,17 +71,16 @@ body {
   transform: translate(-50%, -50%);
   transition: background 0.3s ease, width 0.3s ease, height 0.3s ease;
   opacity: 0;
-  mix-blend-mode: difference;
 }
 .cursor-outer.active {
   width: 60px;
   height: 60px;
-  border-color: #FFFFFF;
+  border-color: var(--accent);
 }
 .cursor-inner.active {
   width: 10px;
   height: 10px;
-  background: #FFFFFF;
+  background: var(--accent);
 }
 
 /* ── Floating Particles ── */
