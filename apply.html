@@ -14,24 +14,23 @@
   --gold-dark: #8a6d3b;
   --ivory: #faf8f4;
   --charcoal: #1a1a1a;
-  --soft-black: #0d0d0d;
+  --soft-black: #231F1F;
   --warm-white: #f5f0e8;
   --glass: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(201, 169, 110, 0.15);
 }
 
-body, html {
+body {
   font-family: 'EB Garamond', serif;
-  background: var(--soft-black) !important;
-  background-color: var(--soft-black) !important;
   color: var(--ivory);
   min-height: 100vh;
   overflow-x: hidden;
   cursor: none;
 }
-/* Override Shopify theme background */
-.main-content, .template-page, #MainContent, main, .page-width,
-.shopify-section, .shopify-section-template--page,
+/* Override Shopify theme background — only on page content, NOT the header */
+#MainContent, #MainContent > *,
+.main-content, .template-page,
+.shopify-section-template--page,
 [role="main"], .content-for-layout {
   background: var(--soft-black) !important;
   background-color: var(--soft-black) !important;
