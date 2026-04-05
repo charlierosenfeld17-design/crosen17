@@ -228,16 +228,20 @@
     padding: 8px 4px 4px !important;
   }
 
-  /* Hover lift & shadow */
+  /* Luxury card border & hover */
   .section-{{ section.id }}-padding .card-wrapper {
     transition: all 0.4s ease;
     border-radius: 8px;
     overflow: hidden;
+    border: 1px solid rgba(183, 155, 111, 0.3);
+    padding: 10px;
+    background: #ffffff;
   }
 
   .section-{{ section.id }}-padding .card-wrapper:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 24px rgba(60, 36, 21, 0.12);
+    border-color: rgba(183, 155, 111, 0.5);
   }
 
   .section-{{ section.id }}-padding .card-wrapper:hover .media img {
