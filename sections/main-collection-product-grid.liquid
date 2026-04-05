@@ -212,16 +212,14 @@
     width: 100% !important;
   }
 
-  /* Shorter cards — use aspect-ratio instead of max-height to preserve grid */
   .section-{{ section.id }}-padding .media {
-    aspect-ratio: 4 / 5;
     overflow: hidden;
   }
 
   .section-{{ section.id }}-padding .media img {
-    object-fit: cover !important;
+    object-fit: contain !important;
     width: 100% !important;
-    height: 100% !important;
+    height: auto !important;
     transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
