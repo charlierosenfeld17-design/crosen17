@@ -36,9 +36,10 @@
   {%- endif -%}
 
   /* --- HEADER BACKGROUND FIX ---
-     Force the header wrapper transparent by default.
-     Only apply a solid background when the header is in sticky/scrolled mode.
+     Force transparent by default on both the section wrapper and header-wrapper.
+     Only apply white background when the header is in sticky/scrolled mode.
   */
+  .section-header,
   .section-header .header-wrapper,
   .section-header .header-wrapper.gradient,
   .section-header .header-wrapper[class*="color-"] {
@@ -46,8 +47,10 @@
     background-color: transparent !important;
   }
 
+  .section-header.shopify-section-header-sticky,
   .section-header.shopify-section-header-sticky .header-wrapper,
   .section-header.shopify-section-header-sticky .header-wrapper.gradient,
+  .section-header.scrolled-past-header,
   .section-header.scrolled-past-header .header-wrapper,
   .section-header.scrolled-past-header .header-wrapper.gradient {
     background: #fff !important;
