@@ -39,13 +39,19 @@
      Force the header wrapper transparent by default.
      Only apply a solid background when the header is in sticky/scrolled mode.
   */
-  .section-header .header-wrapper {
+  .section-header .header-wrapper,
+  .section-header .header-wrapper.gradient,
+  .section-header .header-wrapper[class*="color-"] {
     background: transparent !important;
+    background-color: transparent !important;
   }
 
   .section-header.shopify-section-header-sticky .header-wrapper,
-  .section-header.scrolled-past-header .header-wrapper {
-    background: rgba(var(--color-background), 1) !important;
+  .section-header.shopify-section-header-sticky .header-wrapper.gradient,
+  .section-header.scrolled-past-header .header-wrapper,
+  .section-header.scrolled-past-header .header-wrapper.gradient {
+    background: rgb(var(--color-background)) !important;
+    background-color: rgb(var(--color-background)) !important;
   }
 
   /* ---- Desktop two-row layout ---- */
