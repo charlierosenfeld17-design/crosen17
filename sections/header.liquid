@@ -50,8 +50,8 @@
   .section-header.shopify-section-header-sticky .header-wrapper.gradient,
   .section-header.scrolled-past-header .header-wrapper,
   .section-header.scrolled-past-header .header-wrapper.gradient {
-    background: rgb(var(--color-background)) !important;
-    background-color: rgb(var(--color-background)) !important;
+    background: #fff !important;
+    background-color: #fff !important;
   }
 
   /* ---- Desktop two-row layout ---- */
@@ -160,6 +160,12 @@
   .tiffany-header__nav-row .list-menu__item--link:hover,
   .tiffany-header__nav-row .header__menu-item:hover {
     opacity: 0.6;
+  }
+
+  /* Give dropdown summary items extra right padding for the caret arrow */
+  .tiffany-header__nav-row summary.list-menu__item--link,
+  .tiffany-header__nav-row summary.header__menu-item {
+    padding-right: 2.7rem;
   }
 
   /* Icon styling */
