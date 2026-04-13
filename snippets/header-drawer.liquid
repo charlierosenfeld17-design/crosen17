@@ -1,0 +1,269 @@
+{% comment %}
+  Mobile Menu Drawer — Luxury full-screen overlay with staggered animations.
+  Renders inside <header-drawer> custom element.
+  Proper scroll locking prevents background scroll on iOS/Android.
+{% endcomment %}
+
+<header-drawer data-breakpoint="tablet">
+  <details id="Details-menu-drawer-container" class="menu-drawer-container">
+    <summary
+      class="header__icon header__icon--menu link focus-inset"
+      aria-label="{{ 'sections.header.menu' | t | default: 'Menu' }}"
+    >
+      <span class="svg-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true" focusable="false">
+          <path d="M3 6H19M3 11H19M3 16H19" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </summary>
+
+    <div id="menu-drawer" class="menu-drawer" tabindex="-1">
+      <div class="menu-drawer__overlay" data-menu-overlay></div>
+
+      <div class="menu-drawer__panel">
+        <button class="menu-drawer__close" aria-label="Close menu" data-menu-close>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true" focusable="false">
+            <path d="M17 5L5 17M5 5L17 17" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <div class="menu-drawer__inner">
+          {%- comment -%} Navigation links {%- endcomment -%}
+          <nav class="menu-drawer__navigation" aria-label="Mobile navigation">
+            <ul class="menu-drawer__menu list-menu" role="list">
+              {%- for link in section.settings.menu.links -%}
+                <li class="menu-drawer__menu-item" style="--item-index: {{ forloop.index }};">
+                  {%- if link.links != blank -%}
+                    <details class="menu-drawer__submenu-details">
+                      <summary class="menu-drawer__menu-item-link">
+                        <span>{{ link.title | escape }}</span>
+                        <span class="menu-drawer__arrow">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+                            <path d="M7.5 4L13.5 10L7.5 16" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                      </summary>
+                      <ul class="menu-drawer__submenu list-menu" role="list">
+                        {%- for childlink in link.links -%}
+                          <li>
+                            <a
+                              href="{{ childlink.url }}"
+                              class="menu-drawer__submenu-link{% if childlink.current %} menu-drawer__submenu-link--active{% endif %}"
+                              {% if childlink.current %}aria-current="page"{% endif %}
+                            >
+                              {{ childlink.title | escape }}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    </details>
+                  {%- else -%}
+                    <a
+                      href="{{ link.url }}"
+                      class="menu-drawer__menu-item-link{% if link.current %} menu-drawer__menu-item--active{% endif %}"
+                      {% if link.current %}aria-current="page"{% endif %}
+                    >
+                      <span>{{ link.title | escape }}</span>
+                    </a>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+
+          {%- comment -%} Bottom: country selector + social icons {%- endcomment -%}
+          <div class="menu-drawer__bottom" style="--item-index: {{ section.settings.menu.links.size | plus: 1 }};">
+            {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+              <div class="menu-drawer__localization">
+                <localization-form>
+                  {%- form 'localization', id: 'MobileDrawerCountryForm', class: 'localization-form' -%}
+                    <div>
+                      <h2 class="visually-hidden" id="MobileDrawerCountryLabel">{{ 'localization.country_label' | t }}</h2>
+                      {%- render 'country-localization', localPosition: 'MobileDrawerCountry' -%}
+                    </div>
+                  {%- endform -%}
+                </localization-form>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+              <div class="menu-drawer__localization">
+                <localization-form>
+                  {%- form 'localization', id: 'MobileDrawerLanguageForm', class: 'localization-form' -%}
+                    <div>
+                      <h2 class="visually-hidden" id="MobileDrawerLanguageLabel">{{ 'localization.language_label' | t }}</h2>
+                      {%- render 'language-localization', localPosition: 'MobileDrawerLanguage' -%}
+                    </div>
+                  {%- endform -%}
+                </localization-form>
+              </div>
+            {%- endif -%}
+
+            <ul class="menu-drawer__social list-unstyled" role="list">
+              {%- if settings.social_facebook_link != blank -%}
+                <li>
+                  <a href="{{ settings.social_facebook_link }}" class="menu-drawer__social-link" aria-label="Facebook">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                    </svg>
+                  </a>
+                </li>
+              {%- endif -%}
+              {%- if settings.social_instagram_link != blank -%}
+                <li>
+                  <a href="{{ settings.social_instagram_link }}" class="menu-drawer__social-link" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                  </a>
+                </li>
+              {%- endif -%}
+              {%- if settings.social_twitter_link != blank -%}
+                <li>
+                  <a href="{{ settings.social_twitter_link }}" class="menu-drawer__social-link" aria-label="Twitter">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </a>
+                </li>
+              {%- endif -%}
+              {%- if settings.social_tiktok_link != blank -%}
+                <li>
+                  <a href="{{ settings.social_tiktok_link }}" class="menu-drawer__social-link" aria-label="TikTok">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78 2.92 2.92 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.57 6.33 6.33 0 0 0 9.37 22a6.33 6.33 0 0 0 6.33-6.33V9.18a8.16 8.16 0 0 0 4.3 1.19V7.14a5.17 5.17 0 0 1-.41-.45z"/>
+                    </svg>
+                  </a>
+                </li>
+              {%- endif -%}
+              {%- if settings.social_pinterest_link != blank -%}
+                <li>
+                  <a href="{{ settings.social_pinterest_link }}" class="menu-drawer__social-link" aria-label="Pinterest">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                      <path d="M12 0a12 12 0 0 0-4.37 23.17c-.1-.94-.2-2.4.04-3.44l1.4-5.96s-.36-.72-.36-1.78c0-1.66.97-2.9 2.17-2.9 1.02 0 1.52.77 1.52 1.69 0 1.03-.66 2.57-.99 4-.28 1.19.6 2.16 1.77 2.16 2.12 0 3.76-2.24 3.76-5.47 0-2.86-2.06-4.86-4.99-4.86-3.4 0-5.4 2.55-5.4 5.18 0 1.03.39 2.13.89 2.73.1.12.11.22.08.34l-.33 1.36c-.05.22-.18.26-.4.16-1.49-.69-2.42-2.88-2.42-4.63 0-3.77 2.74-7.23 7.9-7.23 4.15 0 7.37 2.96 7.37 6.91 0 4.12-2.6 7.43-6.2 7.43-1.21 0-2.35-.63-2.74-1.37l-.75 2.84c-.27 1.04-1 2.35-1.49 3.14A12 12 0 1 0 12 0z"/>
+                    </svg>
+                  </a>
+                </li>
+              {%- endif -%}
+              {%- if settings.social_youtube_link != blank -%}
+                <li>
+                  <a href="{{ settings.social_youtube_link }}" class="menu-drawer__social-link" aria-label="YouTube">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </a>
+                </li>
+              {%- endif -%}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+</header-drawer>
+
+<script>
+  /* Header Drawer — Custom element with proper iOS scroll locking */
+  if (!customElements.get('header-drawer')) {
+    class HeaderDrawer extends HTMLElement {
+      constructor() {
+        super();
+        this.scrollPosition = 0;
+        this.isClosing = false;
+      }
+
+      connectedCallback() {
+        this.details = this.querySelector('details');
+        this.drawer = this.querySelector('.menu-drawer');
+        this.overlay = this.querySelector('[data-menu-overlay]');
+        this.closeBtn = this.querySelector('[data-menu-close]');
+        this.summary = this.querySelector('summary');
+
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        /* Summary click — open or close */
+        this.summary.addEventListener('click', (e) => {
+          if (this.isClosing) {
+            e.preventDefault();
+            return;
+          }
+          if (this.details.open) {
+            e.preventDefault();
+            this.close();
+          } else {
+            requestAnimationFrame(() => this.onOpen());
+          }
+        });
+
+        /* Close button */
+        if (this.closeBtn) {
+          this.closeBtn.addEventListener('click', () => this.close());
+        }
+
+        /* Overlay click */
+        if (this.overlay) {
+          this.overlay.addEventListener('click', () => this.close());
+        }
+
+        /* Escape key */
+        this.onKeydown = (e) => {
+          if (e.key === 'Escape' && this.details.open && !this.isClosing) {
+            this.close();
+          }
+        };
+        document.addEventListener('keydown', this.onKeydown);
+      }
+
+      onOpen() {
+        /*
+         * Scroll-lock: fix the body at its current scroll offset.
+         * This prevents iOS Safari from scrolling the background
+         * while the drawer is open.
+         */
+        this.scrollPosition = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${this.scrollPosition}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.classList.add('menu-open');
+
+        /* Move focus into the drawer for accessibility */
+        if (this.drawer) this.drawer.focus();
+      }
+
+      close() {
+        if (this.isClosing) return;
+        this.isClosing = true;
+
+        /* Fade-out animation */
+        if (this.drawer) {
+          this.drawer.classList.add('menu-drawer--closing');
+        }
+
+        setTimeout(() => {
+          this.details.removeAttribute('open');
+          if (this.drawer) {
+            this.drawer.classList.remove('menu-drawer--closing');
+          }
+          this.restoreScroll();
+          this.isClosing = false;
+        }, 280);
+      }
+
+      restoreScroll() {
+        document.body.classList.remove('menu-open');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        window.scrollTo(0, this.scrollPosition);
+      }
+    }
+
+    customElements.define('header-drawer', HeaderDrawer);
+  }
+</script>
