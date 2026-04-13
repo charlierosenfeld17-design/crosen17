@@ -15,13 +15,7 @@
     align-items: center;
     justify-content: center;
     background-color: #ffffff;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
-  }
-
-  .splash-screen.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    transition: opacity 0.6s ease;
   }
 
   .splash-screen__logo {
@@ -69,25 +63,14 @@
     if (!splash) return;
 
     function hideSplash() {
-      if (splash.classList.contains('is-hidden')) return;
-      splash.classList.add('is-hidden');
-      splash.addEventListener('transitionend', function() {
-        splash.remove();
-      }, { once: true });
+      splash.style.opacity = '0';
+      splash.style.pointerEvents = 'none';
+      setTimeout(function() {
+        splash.style.display = 'none';
+      }, 700);
     }
 
-    function scheduleHide() {
-      setTimeout(hideSplash, 1200);
-    }
-
-    /* If the page already loaded, start the timer now; otherwise wait for load */
-    if (document.readyState === 'complete') {
-      scheduleHide();
-    } else {
-      window.addEventListener('load', scheduleHide);
-    }
-
-    /* Safety net: always hide after 4s no matter what */
-    setTimeout(hideSplash, 4000);
+    /* Show for 1.5s then fade out — no dependency on load event */
+    setTimeout(hideSplash, 1500);
   })();
 </script>
