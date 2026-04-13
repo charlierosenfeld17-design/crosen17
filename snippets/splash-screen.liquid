@@ -68,25 +68,26 @@
     var splash = document.getElementById('SplashScreen');
     if (!splash) return;
 
-    /* Wait for the page to fully load, then hold briefly so the logo is visible */
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        splash.classList.add('is-hidden');
-        /* Remove from DOM after the CSS transition finishes */
-        splash.addEventListener('transitionend', function() {
-          splash.remove();
-        }, { once: true });
-      }, 1200);
-    });
+    function hideSplash() {
+      if (splash.classList.contains('is-hidden')) return;
+      splash.classList.add('is-hidden');
+      splash.addEventListener('transitionend', function() {
+        splash.remove();
+      }, { once: true });
+    }
 
-    /* Safety net: hide the splash after 4s even if 'load' hasn't fired (slow networks) */
-    setTimeout(function() {
-      if (splash && !splash.classList.contains('is-hidden')) {
-        splash.classList.add('is-hidden');
-        splash.addEventListener('transitionend', function() {
-          splash.remove();
-        }, { once: true });
-      }
-    }, 4000);
+    function scheduleHide() {
+      setTimeout(hideSplash, 1200);
+    }
+
+    /* If the page already loaded, start the timer now; otherwise wait for load */
+    if (document.readyState === 'complete') {
+      scheduleHide();
+    } else {
+      window.addEventListener('load', scheduleHide);
+    }
+
+    /* Safety net: always hide after 4s no matter what */
+    setTimeout(hideSplash, 4000);
   })();
 </script>
