@@ -1,0 +1,196 @@
+{% comment %}
+  Renders a product card with a hover-reveal Diamond Tester Badge in the top right.
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Taviraj:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  /* Badge Container */
+  .diamond-badge-overlay {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    z-index: 10 !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    padding: 4px 8px !important;
+    border-radius: 20px !important;
+    transition: all 0.3s ease-in-out !important;
+    max-width: 28px; /* Initially only show the symbol */
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    pointer-events: none;
+  }
+
+  .diamond-badge-symbol {
+    font-size: 1.2rem !important;
+    line-height: 1;
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+  }
+
+  .diamond-badge-text {
+    font-family: 'Taviraj', serif !important;
+    font-size: 10px !important;
+    color: #000 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s ease-in-out !important;
+  }
+
+  /* Reveal logic on hover */
+  .product-card-wrapper:hover .diamond-badge-overlay {
+    max-width: 250px; /* Expanded to ensure no text cutoff */
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .product-card-wrapper:hover .diamond-badge-text {
+    opacity: 1;
+  }
+
+  /* Product Card Content Styles */
+  .product-card-custom-content {
+    background-color: #ffffff !important;
+    padding: 1rem 0 1.5rem 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .product-card-custom-title {
+    font-size: 1.1rem !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1rem !important;
+    margin: 0 0 0.1rem 0 !important;
+    font-family: 'Taviraj', serif !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .product-card-custom-price {
+    font-size: 0.825rem !important;
+    opacity: 0.7 !important;
+    font-family: 'Taviraj', serif !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 0 !important;
+  }
+
+  .product-card-custom-price .price,
+  .product-card-custom-price .price-item {
+    font-size: inherit !important;
+  }
+
+  /* Crisp product imagery */
+  .product-card-wrapper .card__media img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    /* Mobile Badge Adjustments */
+    .diamond-badge-overlay {
+      top: 8px !important;
+      right: 8px !important;
+      padding: 3px 6px !important;
+      max-width: 22px;
+    }
+    .diamond-badge-symbol {
+      font-size: 1rem !important;
+    }
+    .diamond-badge-text {
+      font-size: 8px !important; /* Smaller text for mobile fit */
+    }
+    .product-card-wrapper:hover .diamond-badge-overlay {
+      max-width: 160px; /* Specific mobile width to stay inside card */
+    }
+
+    /* Title and Price sizes */
+    .product-card-custom-title {
+      font-size: 1.4rem !important;
+    }
+    .product-card-custom-price {
+      font-size: 1.05rem !important;
+    }
+  }
+</style>
+
+{%- unless skip_styles -%}
+  {{ 'component-rating.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+{%- endunless -%}
+
+{%- if card_product and card_product != empty -%}
+{%- liquid
+  assign ratio = 1
+  if card_product.featured_media and media_aspect_ratio == 'portrait'
+    assign ratio = 0.8
+  elsif card_product.featured_media and media_aspect_ratio == 'adapt'
+    assign ratio = card_product.featured_media.aspect_ratio
+  endif
+-%}
+
+<div class="card-wrapper product-card-wrapper underline-links-hover">
+  <div class="card card--{{ settings.card_style }} {% if card_product.featured_media %} card--media{% endif %}"
+    style="background-color: #fff; border: none; border-radius: 12px; overflow: hidden; position: relative;"
+  >
+    <div class="card__inner" style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%; position: relative; background: #fff; width: 100%;">
+
+      {%- if card_product.featured_media -%}
+        <div class="card__media" style="position: relative;">
+          <div class="media media--transparent media--hover-effect">
+            <img
+              srcset="{%- if card_product.featured_media.width >= 165 -%}{{ card_product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+                {%- if card_product.featured_media.width >= 360 -%}{{ card_product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+                {%- if card_product.featured_media.width >= 533 -%}{{ card_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+                {%- if card_product.featured_media.width >= 720 -%}{{ card_product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+                {%- if card_product.featured_media.width >= 940 -%}{{ card_product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
+                {%- if card_product.featured_media.width >= 1066 -%}{{ card_product.featured_media | image_url: width: 1066 }} 1066w,{%- endif -%}
+                {%- if card_product.featured_media.width >= 1500 -%}{{ card_product.featured_media | image_url: width: 1500 }} 1500w,{%- endif -%}
+                {%- if card_product.featured_media.width >= 2000 -%}{{ card_product.featured_media | image_url: width: 2000 }} 2000w,{%- endif -%}
+                {{ card_product.featured_media | image_url }} {{ card_product.featured_media.width }}w"
+              sizes="(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+              src="{{ card_product.featured_media | image_url: width: 1500 }}"
+              alt="{{ card_product.featured_media.alt | escape }}"
+              class="motion-reduce"
+              loading="lazy"
+              width="{{ card_product.featured_media.width }}"
+              height="{{ card_product.featured_media.height }}"
+            >
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="diamond-badge-overlay">
+         <span class="diamond-badge-symbol">✧</span>
+         <span class="diamond-badge-text">Diamond Tester Certified</span>
+      </div>
+    </div>
+
+    <div class="card__content product-card-custom-content">
+      <div class="card__information">
+        <h3 class="card__heading product-card-custom-title">
+          <a href="{{ card_product.url }}" class="full-unstyled-link">
+            {{ card_product.title | escape }}
+          </a>
+        </h3>
+        <div class="card-information product-card-custom-price">
+          {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}
