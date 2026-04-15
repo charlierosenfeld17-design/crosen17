@@ -1,0 +1,582 @@
+{% doc %}
+  @prompt
+    An anncouncement bar to be more  showing our current running discounts as to buy one get one 50% off - with a countdown also saying it applies at checkout also enhancing incentive to go with the deal, say best deal yet, completly custimizable , i want it more interactive, noticable, thinner, luxury minimialist
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-bar-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    padding: {{ block.settings.bar_padding }}px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: {{ block.settings.border_thickness }}px solid {{ block.settings.border_color }};
+    transition: all 0.3s ease;
+  }
+
+  .ai-announcement-bar-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.hover_background_color }};
+    transform: translateY(-1px);
+  }
+
+  .ai-announcement-bar-shimmer-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, {{ block.settings.shimmer_opacity }}),
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  .ai-announcement-bar-{{ ai_gen_id }}.shimmer-active .ai-announcement-bar-shimmer-{{ ai_gen_id }} {
+    animation: ai-shimmer-{{ ai_gen_id }} {{ block.settings.shimmer_duration }}s infinite;
+  }
+
+  @keyframes ai-shimmer-{{ ai_gen_id }} {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  .ai-announcement-bar-content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-announcement-bar-badge-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    background: {{ block.settings.badge_background }};
+    color: {{ block.settings.badge_text_color }};
+    padding: 3px 10px;
+    border-radius: {{ block.settings.badge_radius }}px;
+    font-size: {{ block.settings.badge_font_size }}px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    border: 1px solid {{ block.settings.badge_border_color }};
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .ai-announcement-bar-{{ ai_gen_id }}:hover .ai-announcement-bar-badge-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-announcement-bar-main-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.main_font_size }}px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .ai-announcement-bar-highlight-{{ ai_gen_id }} {
+    color: {{ block.settings.highlight_color }};
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-announcement-bar-divider-{{ ai_gen_id }} {
+    width: 1px;
+    height: 16px;
+    background: {{ block.settings.text_color }};
+    opacity: 0.2;
+    flex-shrink: 0;
+  }
+
+  .ai-announcement-bar-countdown-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: {{ block.settings.countdown_background }};
+    color: {{ block.settings.countdown_text_color }};
+    padding: 3px 8px;
+    border-radius: {{ block.settings.countdown_radius }}px;
+    font-weight: 500;
+    font-size: {{ block.settings.countdown_font_size }}px;
+    border: 1px solid {{ block.settings.countdown_border_color }};
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-announcement-bar-{{ ai_gen_id }}:hover .ai-announcement-bar-countdown-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-announcement-bar-countdown-segment-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 1px;
+  }
+
+  .ai-announcement-bar-countdown-number-{{ ai_gen_id }} {
+    font-weight: 600;
+    font-size: {{ block.settings.countdown_font_size | plus: 1 }}px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ai-announcement-bar-countdown-label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.countdown_font_size | minus: 2 }}px;
+    opacity: 0.7;
+  }
+
+  .ai-announcement-bar-countdown-separator-{{ ai_gen_id }} {
+    opacity: 0.4;
+    margin: 0 1px;
+  }
+
+  .ai-announcement-bar-subtext-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtext_font_size }}px;
+    opacity: 0.8;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar-{{ ai_gen_id }} {
+      padding: {{ block.settings.bar_padding | times: 0.85 | round }}px 10px;
+    }
+
+    .ai-announcement-bar-content-{{ ai_gen_id }} {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .ai-announcement-bar-divider-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-announcement-bar-main-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.main_font_size | times: 0.85 | round }}px;
+      white-space: nowrap;
+    }
+
+    .ai-announcement-bar-badge-{{ ai_gen_id }} {
+      font-size: {{ block.settings.badge_font_size | times: 0.85 | round }}px;
+      padding: 2px 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .ai-announcement-bar-subtext-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtext_font_size | times: 0.85 | round }}px;
+    }
+
+    .ai-announcement-bar-countdown-{{ ai_gen_id }} {
+      font-size: {{ block.settings.countdown_font_size | times: 0.85 | round }}px;
+      padding: 2px 5px;
+      gap: 2px;
+    }
+
+    .ai-announcement-bar-countdown-number-{{ ai_gen_id }} {
+      font-size: {{ block.settings.countdown_font_size | times: 0.85 | round | plus: 1 }}px;
+    }
+  }
+{% endstyle %}
+
+<announcement-bar-{{ ai_gen_id }}
+  class="ai-announcement-bar-{{ ai_gen_id }} {% if block.settings.enable_shimmer %}shimmer-active{% endif %}"
+  data-end-date="{{ block.settings.countdown_end_date }}"
+  data-end-time="{{ block.settings.countdown_end_time }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.enable_shimmer %}
+    <div class="ai-announcement-bar-shimmer-{{ ai_gen_id }}"></div>
+  {% endif %}
+
+  <div class="ai-announcement-bar-content-{{ ai_gen_id }}">
+    {% if block.settings.show_badge %}
+      <div class="ai-announcement-bar-badge-{{ ai_gen_id }}">
+        {{ block.settings.badge_text }}
+      </div>
+    {% endif %}
+
+    <div class="ai-announcement-bar-main-text-{{ ai_gen_id }}">
+      {% if block.settings.main_text_before != blank %}{{ block.settings.main_text_before }}{% endif %}
+      <span class="ai-announcement-bar-highlight-{{ ai_gen_id }}">{{ block.settings.highlight_text }}</span>
+      {% if block.settings.main_text_after != blank %}{{ block.settings.main_text_after }}{% endif %}
+    </div>
+
+    {% if block.settings.show_countdown %}
+      <div class="ai-announcement-bar-divider-{{ ai_gen_id }}"></div>
+      <div class="ai-announcement-bar-countdown-{{ ai_gen_id }}" data-countdown>
+        <span class="ai-announcement-bar-countdown-segment-{{ ai_gen_id }}">
+          <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-hours>00</span>
+          <span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">h</span>
+        </span>
+        <span class="ai-announcement-bar-countdown-separator-{{ ai_gen_id }}">:</span>
+        <span class="ai-announcement-bar-countdown-segment-{{ ai_gen_id }}">
+          <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-minutes>00</span>
+          <span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">m</span>
+        </span>
+        <span class="ai-announcement-bar-countdown-separator-{{ ai_gen_id }}">:</span>
+        <span class="ai-announcement-bar-countdown-segment-{{ ai_gen_id }}">
+          <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-seconds>00</span>
+          <span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">s</span>
+        </span>
+      </div>
+    {% endif %}
+
+    {% if block.settings.subtext != blank %}
+      <div class="ai-announcement-bar-divider-{{ ai_gen_id }}"></div>
+      <div class="ai-announcement-bar-subtext-{{ ai_gen_id }}">
+        {{ block.settings.subtext }}
+      </div>
+    {% endif %}
+  </div>
+</announcement-bar-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBar{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.countdownElement = this.querySelector('[data-countdown]');
+        this.hoursElement = this.querySelector('[data-hours]');
+        this.minutesElement = this.querySelector('[data-minutes]');
+        this.secondsElement = this.querySelector('[data-seconds]');
+        this.endDate = this.dataset.endDate;
+        this.endTime = this.dataset.endTime;
+      }
+
+      connectedCallback() {
+        if (this.countdownElement && this.endDate && this.endTime) {
+          this.startCountdown();
+        }
+      }
+
+      startCountdown() {
+        const endDateTime = new Date(this.endDate + 'T' + this.endTime).getTime();
+
+        const updateCountdown = () => {
+          const now = new Date().getTime();
+          const distance = endDateTime - now;
+
+          if (distance < 0) {
+            this.hoursElement.textContent = '00';
+            this.minutesElement.textContent = '00';
+            this.secondsElement.textContent = '00';
+            return;
+          }
+
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          this.hoursElement.textContent = String(hours).padStart(2, '0');
+          this.minutesElement.textContent = String(minutes).padStart(2, '0');
+          this.secondsElement.textContent = String(seconds).padStart(2, '0');
+        };
+
+        updateCountdown();
+        this.interval = setInterval(updateCountdown, 1000);
+      }
+
+      disconnectedCallback() {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+      }
+    }
+
+    customElements.define('announcement-bar-{{ ai_gen_id }}', AnnouncementBar{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Discount announcement bar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Best Deal"
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Badge font size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "badge_radius",
+      "label": "Badge border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Badge background",
+      "default": "#231f1f"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "badge_border_color",
+      "label": "Badge border color",
+      "default": "#b79c6f"
+    },
+    {
+      "type": "header",
+      "content": "Main message"
+    },
+    {
+      "type": "text",
+      "id": "main_text_before",
+      "label": "Text before highlight"
+    },
+    {
+      "type": "text",
+      "id": "highlight_text",
+      "label": "Highlighted text",
+      "default": "Buy One Get One 50% Off"
+    },
+    {
+      "type": "text",
+      "id": "main_text_after",
+      "label": "Text after highlight"
+    },
+    {
+      "type": "range",
+      "id": "main_font_size",
+      "label": "Main font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight color",
+      "default": "#b79c6f"
+    },
+    {
+      "type": "header",
+      "content": "Subtext"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Applies at checkout"
+    },
+    {
+      "type": "range",
+      "id": "subtext_font_size",
+      "label": "Subtext font size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "header",
+      "content": "Countdown timer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_end_date",
+      "label": "End date",
+      "info": "Format: YYYY-MM-DD (e.g., 2026-04-20)",
+      "default": "2026-04-20"
+    },
+    {
+      "type": "text",
+      "id": "countdown_end_time",
+      "label": "End time",
+      "info": "Format: HH:MM:SS in 24-hour format (e.g., 23:59:59)",
+      "default": "23:59:59"
+    },
+    {
+      "type": "range",
+      "id": "countdown_font_size",
+      "label": "Countdown font size",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "countdown_radius",
+      "label": "Countdown border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "countdown_background",
+      "label": "Countdown background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "countdown_text_color",
+      "label": "Countdown text color",
+      "default": "#231f1f"
+    },
+    {
+      "type": "color",
+      "id": "countdown_border_color",
+      "label": "Countdown border color",
+      "default": "#e7ddcf"
+    },
+    {
+      "type": "header",
+      "content": "Bar style"
+    },
+    {
+      "type": "range",
+      "id": "bar_padding",
+      "label": "Vertical padding",
+      "min": 6,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "hover_background_color",
+      "label": "Hover background color",
+      "default": "#fafafa"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#231f1f"
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "label": "Border thickness",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e7ddcf"
+    },
+    {
+      "type": "header",
+      "content": "Interactive effects"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shimmer",
+      "label": "Enable shimmer effect",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "shimmer_duration",
+      "label": "Shimmer duration",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "s",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "shimmer_opacity",
+      "label": "Shimmer opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.2
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Discount announcement bar"
+    }
+  ]
+}
+{% endschema %}
