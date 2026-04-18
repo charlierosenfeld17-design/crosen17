@@ -88,7 +88,7 @@
     align-items: center;
     justify-content: center;
     flex-wrap: nowrap;
-    gap: clamp(10px, 2vw, 22px);
+    gap: clamp(12px, 2.2vw, 24px);
     max-width: {{ block.settings.desktop_width_percent }}%;
     margin: 0 auto;
     position: relative;
@@ -106,7 +106,7 @@
     color: {{ block.settings.badge_text_color }};
     padding: 0;
     border: 0;
-    font-size: clamp(8px, 0.9vw, {{ block.settings.badge_font_size }}px);
+    font-size: clamp(11px, 1.1vw, {{ block.settings.badge_font_size }}px);
     font-weight: 500;
     font-style: normal;
     font-variant: small-caps;
@@ -137,7 +137,7 @@
 
   /* MAIN TEXT */
   .ai-announcement-bar-main-text-{{ ai_gen_id }} {
-    font-size: clamp(10px, 1.4vw, {{ block.settings.main_font_size }}px);
+    font-size: clamp(14px, 2vw, {{ block.settings.main_font_size }}px);
     font-weight: 400;
     font-style: normal;
     line-height: 1;
@@ -178,7 +178,7 @@
     border: 0;
     font-weight: 400;
     font-style: normal;
-    font-size: clamp(9px, 1.1vw, {{ block.settings.countdown_font_size }}px);
+    font-size: clamp(13px, 1.6vw, {{ block.settings.countdown_font_size }}px);
     white-space: nowrap;
     letter-spacing: 0.06em;
     flex-shrink: 0;
@@ -211,7 +211,7 @@
 
   /* SUBTEXT */
   .ai-announcement-bar-subtext-{{ ai_gen_id }} {
-    font-size: clamp(9px, 1vw, {{ block.settings.subtext_font_size }}px);
+    font-size: clamp(12px, 1.3vw, {{ block.settings.subtext_font_size }}px);
     font-style: normal;
     opacity: 0.52;
     font-weight: 300;
@@ -220,22 +220,21 @@
     flex-shrink: 1;
   }
 
-  /* Mobile — stay in one row, hide subtext and badge flanks to save space */
+  /* Mobile — single row: hide badge + subtext + dividers, keep message + countdown readable */
   @media screen and (max-width: 749px) {
     .ai-announcement-bar-{{ ai_gen_id }} {
-      padding: {{ block.settings.bar_padding }}px 10px;
+      padding: {{ block.settings.bar_padding }}px 12px;
     }
     .ai-announcement-bar-content-{{ ai_gen_id }} {
-      gap: 8px;
+      gap: 10px;
+    }
+    .ai-announcement-bar-badge-{{ ai_gen_id }} {
+      display: none;
     }
     .ai-announcement-bar-subtext-{{ ai_gen_id }} {
       display: none;
     }
     .ai-announcement-bar-divider-{{ ai_gen_id }} {
-      display: none;
-    }
-    .ai-announcement-bar-badge-{{ ai_gen_id }}::before,
-    .ai-announcement-bar-badge-{{ ai_gen_id }}::after {
       display: none;
     }
   }
@@ -329,29 +328,29 @@
     { "type": "header", "content": "Badge" },
     { "type": "checkbox", "id": "show_badge", "label": "Show badge", "default": true },
     { "type": "text", "id": "badge_text", "label": "Badge text", "default": "Best Deal Yet" },
-    { "type": "range", "id": "badge_font_size", "label": "Badge font size", "min": 9, "max": 14, "step": 1, "unit": "px", "default": 10 },
+    { "type": "range", "id": "badge_font_size", "label": "Badge font size", "min": 9, "max": 16, "step": 1, "unit": "px", "default": 12 },
     { "type": "color", "id": "badge_text_color", "label": "Badge text color", "default": "#1c1a17" },
 
     { "type": "header", "content": "Main message" },
     { "type": "text", "id": "main_text_before", "label": "Text before highlight", "default": "Limited offer —" },
     { "type": "text", "id": "highlight_text", "label": "Highlighted text", "default": "Buy One, Get One 50% Off" },
     { "type": "text", "id": "main_text_after", "label": "Text after highlight" },
-    { "type": "range", "id": "main_font_size", "label": "Main font size", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 13 },
+    { "type": "range", "id": "main_font_size", "label": "Main font size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 16 },
     { "type": "color", "id": "highlight_color", "label": "Highlight / accent color", "default": "#a8804b" },
     { "type": "text", "id": "heading_font_family", "label": "Highlight font-family CSS", "default": "'Playfair Display', 'Cormorant Garamond', Georgia, serif" },
 
     { "type": "header", "content": "Subtext" },
     { "type": "text", "id": "subtext", "label": "Subtext (hidden on mobile)", "default": "Applies automatically at checkout" },
-    { "type": "range", "id": "subtext_font_size", "label": "Subtext font size", "min": 9, "max": 14, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "subtext_font_size", "label": "Subtext font size", "min": 9, "max": 16, "step": 1, "unit": "px", "default": 13 },
 
     { "type": "header", "content": "Countdown timer" },
     { "type": "checkbox", "id": "show_countdown", "label": "Show countdown", "default": true },
     { "type": "text", "id": "countdown_end_date", "label": "End date", "info": "Format: YYYY-MM-DD", "default": "2026-04-30" },
     { "type": "text", "id": "countdown_end_time", "label": "End time", "info": "Format: HH:MM:SS (24-hour)", "default": "23:59:59" },
-    { "type": "range", "id": "countdown_font_size", "label": "Countdown font size", "min": 9, "max": 14, "step": 1, "unit": "px", "default": 11 },
+    { "type": "range", "id": "countdown_font_size", "label": "Countdown font size", "min": 9, "max": 18, "step": 1, "unit": "px", "default": 14 },
 
     { "type": "header", "content": "Bar style" },
-    { "type": "range", "id": "bar_padding", "label": "Vertical padding", "min": 4, "max": 20, "step": 1, "unit": "px", "default": 8 },
+    { "type": "range", "id": "bar_padding", "label": "Vertical padding", "min": 4, "max": 24, "step": 1, "unit": "px", "default": 11 },
     { "type": "color", "id": "background_color", "label": "Background color", "default": "#f4efe6" },
     { "type": "color", "id": "hover_background_color", "label": "Hover background color", "default": "#ebe4d6" },
     { "type": "color", "id": "text_color", "label": "Text color", "default": "#1c1a17" },
