@@ -81,20 +81,29 @@
     100% { left: 110%; }
   }
 
-  /* Single-row content — always a row, never wraps */
+  /* Outer wrapper — column: text row on top, countdown below */
   .ai-announcement-bar-content-{{ ai_gen_id }} {
-    display: inline-flex;
-    flex-direction: row;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-wrap: nowrap;
-    gap: clamp(12px, 2.2vw, 24px);
+    gap: 5px;
     max-width: {{ block.settings.desktop_width_percent }}%;
     margin: 0 auto;
     position: relative;
     z-index: 1;
     width: 100%;
-    overflow: hidden;
+  }
+
+  /* Top row — badge + main text inline */
+  .ai-announcement-bar-top-{{ ai_gen_id }} {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: clamp(10px, 1.8vw, 20px);
+    width: 100%;
   }
 
   /* BADGE — small-caps, no italic, hairline flanked */
@@ -148,19 +157,18 @@
     min-width: 0;
   }
 
-  /* Highlight — same size as main text, no italic */
+  /* Highlight — identical font to surrounding text, accent color only */
   .ai-announcement-bar-highlight-{{ ai_gen_id }} {
     color: var(--accent);
-    font-family: {{ block.settings.heading_font_family }};
     font-style: normal;
     font-weight: 500;
     font-size: inherit;
-    letter-spacing: 0.03em;
+    letter-spacing: inherit;
   }
 
-  /* Hairline divider */
+  /* Hairline divider (desktop only, between badge and text) */
   .ai-announcement-bar-divider-{{ ai_gen_id }} {
-    width: 22px;
+    width: 20px;
     height: 1px;
     background: currentColor;
     opacity: 0.18;
@@ -220,13 +228,13 @@
     flex-shrink: 1;
   }
 
-  /* Mobile — single row: hide badge + subtext + dividers, keep message + countdown readable */
+  /* Mobile — hide badge + subtext, keep text + countdown stacked */
   @media screen and (max-width: 749px) {
     .ai-announcement-bar-{{ ai_gen_id }} {
       padding: {{ block.settings.bar_padding }}px 12px;
     }
     .ai-announcement-bar-content-{{ ai_gen_id }} {
-      gap: 10px;
+      gap: 4px;
     }
     .ai-announcement-bar-badge-{{ ai_gen_id }} {
       display: none;
@@ -247,16 +255,25 @@
 
   <div class="ai-announcement-bar-content-{{ ai_gen_id }}">
 
-    {% if block.settings.show_badge %}
-      <span class="ai-announcement-bar-badge-{{ ai_gen_id }}">{{ block.settings.badge_text }}</span>
-    {% endif %}
+    <!-- Top row: badge + main message -->
+    <div class="ai-announcement-bar-top-{{ ai_gen_id }}">
+      {% if block.settings.show_badge %}
+        <span class="ai-announcement-bar-badge-{{ ai_gen_id }}">{{ block.settings.badge_text }}</span>
+        <span class="ai-announcement-bar-divider-{{ ai_gen_id }}" aria-hidden="true"></span>
+      {% endif %}
 
-    <span class="ai-announcement-bar-main-text-{{ ai_gen_id }}">
-      {% if block.settings.main_text_before != blank %}{{ block.settings.main_text_before }} {% endif %}<span class="ai-announcement-bar-highlight-{{ ai_gen_id }}">{{ block.settings.highlight_text }}</span>{% if block.settings.main_text_after != blank %} {{ block.settings.main_text_after }}{% endif %}
-    </span>
+      <span class="ai-announcement-bar-main-text-{{ ai_gen_id }}">
+        {% if block.settings.main_text_before != blank %}{{ block.settings.main_text_before }} {% endif %}<span class="ai-announcement-bar-highlight-{{ ai_gen_id }}">{{ block.settings.highlight_text }}</span>{% if block.settings.main_text_after != blank %} {{ block.settings.main_text_after }}{% endif %}
+      </span>
 
+      {% if block.settings.subtext != blank %}
+        <span class="ai-announcement-bar-divider-{{ ai_gen_id }}" aria-hidden="true"></span>
+        <span class="ai-announcement-bar-subtext-{{ ai_gen_id }}">{{ block.settings.subtext }}</span>
+      {% endif %}
+    </div>
+
+    <!-- Countdown below the text -->
     {% if block.settings.show_countdown %}
-      <span class="ai-announcement-bar-divider-{{ ai_gen_id }}" aria-hidden="true"></span>
       <span
         class="ai-announcement-bar-countdown-{{ ai_gen_id }}"
         id="countdown-{{ ai_gen_id }}"
@@ -279,11 +296,6 @@
           <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-seconds>00</span><span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">s</span>
         </span>
       </span>
-    {% endif %}
-
-    {% if block.settings.subtext != blank %}
-      <span class="ai-announcement-bar-divider-{{ ai_gen_id }}" aria-hidden="true"></span>
-      <span class="ai-announcement-bar-subtext-{{ ai_gen_id }}">{{ block.settings.subtext }}</span>
     {% endif %}
 
   </div>
