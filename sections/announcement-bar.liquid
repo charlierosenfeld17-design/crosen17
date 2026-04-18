@@ -1,0 +1,371 @@
+{% doc %}
+  @prompt
+    Luxury single-row announcement bar — no italics, uniform font size,
+    small-caps badge with hairline flanks, live countdown, grain + shimmer.
+    Single row on all viewports.
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-bar-{{ ai_gen_id }} {
+    --ink: {{ block.settings.text_color }};
+    --bg: {{ block.settings.background_color }};
+    --bg-hover: {{ block.settings.hover_background_color }};
+    --accent: {{ block.settings.highlight_color }};
+    display: block;
+    width: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    padding: {{ block.settings.bar_padding }}px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: {{ block.settings.border_thickness }}px solid {{ block.settings.border_color }};
+    transition: background 0.7s ease;
+    font-feature-settings: "kern", "liga", "ss01";
+    letter-spacing: 0.02em;
+  }
+  .ai-announcement-bar-{{ ai_gen_id }}:hover {
+    background: var(--bg-hover);
+  }
+
+  /* Grain overlay */
+  .ai-announcement-bar-{{ ai_gen_id }}::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.6;
+    mix-blend-mode: multiply;
+  }
+
+  /* Top hairline accent */
+  .ai-announcement-bar-{{ ai_gen_id }}::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Shimmer */
+  .ai-announcement-bar-shimmer-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, {{ block.settings.shimmer_opacity }}),
+      transparent
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ai-announcement-bar-{{ ai_gen_id }}.shimmer-active .ai-announcement-bar-shimmer-{{ ai_gen_id }} {
+    animation: ai-shimmer-{{ ai_gen_id }} {{ block.settings.shimmer_duration }}s infinite cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes ai-shimmer-{{ ai_gen_id }} {
+    0%   { left: -60%; }
+    100% { left: 110%; }
+  }
+
+  /* Single-row content — always a row, never wraps */
+  .ai-announcement-bar-content-{{ ai_gen_id }} {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: clamp(10px, 2vw, 22px);
+    max-width: {{ block.settings.desktop_width_percent }}%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* BADGE — small-caps, no italic, hairline flanked */
+  .ai-announcement-bar-badge-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: transparent;
+    color: {{ block.settings.badge_text_color }};
+    padding: 0;
+    border: 0;
+    font-size: clamp(8px, 0.9vw, {{ block.settings.badge_font_size }}px);
+    font-weight: 500;
+    font-style: normal;
+    font-variant: small-caps;
+    text-transform: uppercase;
+    letter-spacing: 0.38em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color 0.45s ease;
+  }
+  .ai-announcement-bar-badge-{{ ai_gen_id }}::before,
+  .ai-announcement-bar-badge-{{ ai_gen_id }}::after {
+    content: "";
+    width: 16px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.38;
+    flex-shrink: 0;
+    transition: width 0.45s ease, opacity 0.45s ease;
+  }
+  .ai-announcement-bar-{{ ai_gen_id }}:hover .ai-announcement-bar-badge-{{ ai_gen_id }} {
+    color: var(--accent);
+  }
+  .ai-announcement-bar-{{ ai_gen_id }}:hover .ai-announcement-bar-badge-{{ ai_gen_id }}::before,
+  .ai-announcement-bar-{{ ai_gen_id }}:hover .ai-announcement-bar-badge-{{ ai_gen_id }}::after {
+    width: 22px;
+    opacity: 0.6;
+  }
+
+  /* MAIN TEXT */
+  .ai-announcement-bar-main-text-{{ ai_gen_id }} {
+    font-size: clamp(10px, 1.4vw, {{ block.settings.main_font_size }}px);
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  /* Highlight — same size as main text, no italic */
+  .ai-announcement-bar-highlight-{{ ai_gen_id }} {
+    color: var(--accent);
+    font-family: {{ block.settings.heading_font_family }};
+    font-style: normal;
+    font-weight: 500;
+    font-size: inherit;
+    letter-spacing: 0.03em;
+  }
+
+  /* Hairline divider */
+  .ai-announcement-bar-divider-{{ ai_gen_id }} {
+    width: 22px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.18;
+    flex-shrink: 0;
+  }
+
+  /* COUNTDOWN */
+  .ai-announcement-bar-countdown-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    color: var(--ink);
+    padding: 0;
+    border: 0;
+    font-weight: 400;
+    font-style: normal;
+    font-size: clamp(9px, 1.1vw, {{ block.settings.countdown_font_size }}px);
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    transition: color 0.45s ease;
+  }
+  .ai-announcement-bar-{{ ai_gen_id }}:hover .ai-announcement-bar-countdown-{{ ai_gen_id }} {
+    color: var(--accent);
+  }
+  .ai-announcement-bar-countdown-segment-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 1px;
+  }
+  .ai-announcement-bar-countdown-number-{{ ai_gen_id }} {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.03em;
+  }
+  .ai-announcement-bar-countdown-label-{{ ai_gen_id }} {
+    font-size: 0.72em;
+    opacity: 0.45;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-style: normal;
+  }
+  .ai-announcement-bar-countdown-separator-{{ ai_gen_id }} {
+    opacity: 0.22;
+    margin: 0 1px;
+  }
+
+  /* SUBTEXT */
+  .ai-announcement-bar-subtext-{{ ai_gen_id }} {
+    font-size: clamp(9px, 1vw, {{ block.settings.subtext_font_size }}px);
+    font-style: normal;
+    opacity: 0.52;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 1;
+  }
+
+  /* Mobile — stay in one row, hide subtext and badge flanks to save space */
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar-{{ ai_gen_id }} {
+      padding: {{ block.settings.bar_padding }}px 10px;
+    }
+    .ai-announcement-bar-content-{{ ai_gen_id }} {
+      gap: 8px;
+    }
+    .ai-announcement-bar-subtext-{{ ai_gen_id }} {
+      display: none;
+    }
+    .ai-announcement-bar-divider-{{ ai_gen_id }} {
+      display: none;
+    }
+    .ai-announcement-bar-badge-{{ ai_gen_id }}::before,
+    .ai-announcement-bar-badge-{{ ai_gen_id }}::after {
+      display: none;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-announcement-bar-{{ ai_gen_id }}{% if block.settings.enable_shimmer %} shimmer-active{% endif %}">
+  {% if block.settings.enable_shimmer %}
+    <span class="ai-announcement-bar-shimmer-{{ ai_gen_id }}" aria-hidden="true"></span>
+  {% endif %}
+
+  <div class="ai-announcement-bar-content-{{ ai_gen_id }}">
+
+    {% if block.settings.show_badge %}
+      <span class="ai-announcement-bar-badge-{{ ai_gen_id }}">{{ block.settings.badge_text }}</span>
+    {% endif %}
+
+    <span class="ai-announcement-bar-main-text-{{ ai_gen_id }}">
+      {% if block.settings.main_text_before != blank %}{{ block.settings.main_text_before }} {% endif %}<span class="ai-announcement-bar-highlight-{{ ai_gen_id }}">{{ block.settings.highlight_text }}</span>{% if block.settings.main_text_after != blank %} {{ block.settings.main_text_after }}{% endif %}
+    </span>
+
+    {% if block.settings.show_countdown %}
+      <span class="ai-announcement-bar-divider-{{ ai_gen_id }}" aria-hidden="true"></span>
+      <span
+        class="ai-announcement-bar-countdown-{{ ai_gen_id }}"
+        id="countdown-{{ ai_gen_id }}"
+        data-end-date="{{ block.settings.countdown_end_date }}T{{ block.settings.countdown_end_time }}"
+        aria-live="polite"
+      >
+        <span class="ai-announcement-bar-countdown-segment-{{ ai_gen_id }}">
+          <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-days>00</span><span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">d</span>
+        </span>
+        <span class="ai-announcement-bar-countdown-separator-{{ ai_gen_id }}">·</span>
+        <span class="ai-announcement-bar-countdown-segment-{{ ai_gen_id }}">
+          <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-hours>00</span><span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">h</span>
+        </span>
+        <span class="ai-announcement-bar-countdown-separator-{{ ai_gen_id }}">·</span>
+        <span class="ai-announcement-bar-countdown-segment-{{ ai_gen_id }}">
+          <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-minutes>00</span><span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">m</span>
+        </span>
+        <span class="ai-announcement-bar-countdown-separator-{{ ai_gen_id }}">·</span>
+        <span class="ai-announcement-bar-countdown-segment-{{ ai_gen_id }}">
+          <span class="ai-announcement-bar-countdown-number-{{ ai_gen_id }}" data-seconds>00</span><span class="ai-announcement-bar-countdown-label-{{ ai_gen_id }}">s</span>
+        </span>
+      </span>
+    {% endif %}
+
+    {% if block.settings.subtext != blank %}
+      <span class="ai-announcement-bar-divider-{{ ai_gen_id }}" aria-hidden="true"></span>
+      <span class="ai-announcement-bar-subtext-{{ ai_gen_id }}">{{ block.settings.subtext }}</span>
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var el = document.getElementById('countdown-{{ ai_gen_id }}');
+    if (!el) return;
+    var end = new Date(el.getAttribute('data-end-date')).getTime();
+    if (isNaN(end)) return;
+
+    var dEl = el.querySelector('[data-days]');
+    var hEl = el.querySelector('[data-hours]');
+    var mEl = el.querySelector('[data-minutes]');
+    var sEl = el.querySelector('[data-seconds]');
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function tick() {
+      var diff = end - Date.now();
+      if (diff <= 0) {
+        dEl.textContent = '00'; hEl.textContent = '00';
+        mEl.textContent = '00'; sEl.textContent = '00';
+        clearInterval(timer);
+        return;
+      }
+      dEl.textContent = pad(Math.floor(diff / 86400000));
+      hEl.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+      mEl.textContent = pad(Math.floor((diff % 3600000) / 60000));
+      sEl.textContent = pad(Math.floor((diff % 60000) / 1000));
+    }
+    tick();
+    var timer = setInterval(tick, 1000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Discount announcement bar",
+  "settings": [
+    { "type": "header", "content": "Badge" },
+    { "type": "checkbox", "id": "show_badge", "label": "Show badge", "default": true },
+    { "type": "text", "id": "badge_text", "label": "Badge text", "default": "Best Deal Yet" },
+    { "type": "range", "id": "badge_font_size", "label": "Badge font size", "min": 9, "max": 14, "step": 1, "unit": "px", "default": 10 },
+    { "type": "color", "id": "badge_text_color", "label": "Badge text color", "default": "#1c1a17" },
+
+    { "type": "header", "content": "Main message" },
+    { "type": "text", "id": "main_text_before", "label": "Text before highlight", "default": "Limited offer —" },
+    { "type": "text", "id": "highlight_text", "label": "Highlighted text", "default": "Buy One, Get One 50% Off" },
+    { "type": "text", "id": "main_text_after", "label": "Text after highlight" },
+    { "type": "range", "id": "main_font_size", "label": "Main font size", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 13 },
+    { "type": "color", "id": "highlight_color", "label": "Highlight / accent color", "default": "#a8804b" },
+    { "type": "text", "id": "heading_font_family", "label": "Highlight font-family CSS", "default": "'Playfair Display', 'Cormorant Garamond', Georgia, serif" },
+
+    { "type": "header", "content": "Subtext" },
+    { "type": "text", "id": "subtext", "label": "Subtext (hidden on mobile)", "default": "Applies automatically at checkout" },
+    { "type": "range", "id": "subtext_font_size", "label": "Subtext font size", "min": 9, "max": 14, "step": 1, "unit": "px", "default": 12 },
+
+    { "type": "header", "content": "Countdown timer" },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show countdown", "default": true },
+    { "type": "text", "id": "countdown_end_date", "label": "End date", "info": "Format: YYYY-MM-DD", "default": "2026-04-30" },
+    { "type": "text", "id": "countdown_end_time", "label": "End time", "info": "Format: HH:MM:SS (24-hour)", "default": "23:59:59" },
+    { "type": "range", "id": "countdown_font_size", "label": "Countdown font size", "min": 9, "max": 14, "step": 1, "unit": "px", "default": 11 },
+
+    { "type": "header", "content": "Bar style" },
+    { "type": "range", "id": "bar_padding", "label": "Vertical padding", "min": 4, "max": 20, "step": 1, "unit": "px", "default": 8 },
+    { "type": "color", "id": "background_color", "label": "Background color", "default": "#f4efe6" },
+    { "type": "color", "id": "hover_background_color", "label": "Hover background color", "default": "#ebe4d6" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#1c1a17" },
+    { "type": "range", "id": "border_thickness", "label": "Border thickness", "min": 0, "max": 3, "step": 1, "unit": "px", "default": 1 },
+    { "type": "color", "id": "border_color", "label": "Border color", "default": "#d9cfb8" },
+    { "type": "range", "id": "desktop_width_percent", "label": "Content max width", "min": 50, "max": 100, "step": 5, "unit": "%", "default": 100 },
+
+    { "type": "header", "content": "Interactive effects" },
+    { "type": "checkbox", "id": "enable_shimmer", "label": "Enable shimmer effect", "default": true },
+    { "type": "range", "id": "shimmer_duration", "label": "Shimmer duration", "min": 2, "max": 8, "step": 1, "unit": "s", "default": 5 },
+    { "type": "range", "id": "shimmer_opacity", "label": "Shimmer opacity", "min": 0, "max": 0.5, "step": 0.1, "default": 0.3 }
+  ],
+  "presets": [
+    { "name": "Discount announcement bar" }
+  ]
+}
+{% endschema %}
