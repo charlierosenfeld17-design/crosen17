@@ -1,0 +1,593 @@
+{% comment %}
+  Northstone Jewelry — Product Detail Section (Luxury Immersive Edition V8)
+  sections/main-product.liquid
+{% endcomment %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% liquid
+  assign actual_price = current_variant.price
+  assign luxury_markup = 1.35
+  assign luxury_msrp = actual_price | times: luxury_markup | round
+%}
+
+{% style %}
+  /* ══════ RESET & BASE ══════ */
+  .ns-pdp {
+    background: linear-gradient(180deg, #fefdfb 0%, #ffffff 40%);
+    color:#0a0a0a;
+    font-family:var(--font-body-family,'Helvetica Neue',sans-serif);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .ns-pdp *,.ns-pdp *::before,.ns-pdp *::after { box-sizing:border-box; margin:0; padding:0; }
+  .ns-pdp a { color:#0a0a0a; text-decoration:none; }
+  .ns-pdp-inner { max-width:1320px; margin:0 auto; padding:18px 16px 120px; }
+
+  /* ══════ BACK ══════ */
+  .ns-back {
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:10px; letter-spacing:0.32em; text-transform:uppercase;
+    margin-bottom:18px; transition:all .4s ease;
+    color: #555; font-weight: 500;
+  }
+  .ns-back:hover { opacity:.55; transform: translateX(-3px); color:#b8860b; }
+  .ns-back svg { width:13px; height:13px; }
+
+  /* ══════ GRID ══════ */
+  .ns-grid { display:grid; grid-template-columns:1fr; gap:22px; }
+
+  /* ══════ LUXURY IMMERSIVE GALLERY ══════ */
+  .ns-gallery-wrap { position:relative; }
+.ns-gallery-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0;
+    background: #faf8f3;
+    box-shadow: 0 1px 0 rgba(184,134,11,0.08);
+    /* FIX: Force container to stay square so absolute elements don't fly up */
+    aspect-ratio: 1/1;
+    z-index: 1;
+  }
+
+  .ns-gallery-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    height: 100%;
+  }
+  .ns-gallery-slider::-webkit-scrollbar { display: none; }
+
+  .ns-gallery-item {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #faf8f3;
+  }
+
+  .ns-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 1.8s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .ns-gallery-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.06) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+.ns-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+    /* Micro font size */
+    font-size: 7px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #8a6508;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    /* Slimmer padding */
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    pointer-events: none;
+    border: 0.5px solid rgba(184, 134, 11, 0.2);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    white-space: nowrap;
+  }
+  /* Smaller star icon to match the tiny text */
+  .ns-badge svg {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+  }
+  .ns-badge svg { width:10px; height:10px; }
+
+  .ns-gallery-pagination {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 9px;
+    z-index: 5;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 8px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 0.5px solid rgba(255,255,255,0.8);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all .4s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .ns-pagination-dot {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.22);
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .ns-pagination-dot::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    cursor: pointer;
+  }
+
+  .ns-pagination-dot:hover {
+    background: rgba(184, 134, 11, 0.5);
+    transform: scale(1.15);
+  }
+
+  .ns-pagination-dot.active {
+    background: linear-gradient(135deg, #b8860b 0%, #f0d177 50%, #b8860b 100%);
+    width: 24px;
+    border-radius: 100px;
+    box-shadow:
+      0 0 12px rgba(212, 175, 55, 0.6),
+      0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  /* Swipe hint */
+  .ns-swipe-hint {
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    z-index: 5;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.95);
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 6px 10px;
+    border-radius: 100px;
+    display: flex; align-items: center; gap: 6px;
+    pointer-events: none;
+    animation: ns-hint-fade 4s ease-in-out 1;
+    opacity: 0;
+  }
+  .ns-swipe-hint svg { width: 10px; height: 10px; }
+  @keyframes ns-hint-fade {
+    0%, 100% { opacity: 0; transform: translateY(-50%) translateX(0); }
+    20%, 70% { opacity: 1; }
+    45% { transform: translateY(-50%) translateX(-6px); }
+  }
+
+  /* ══════ STATUS BADGE ══════ */
+  .ns-status-badge {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: #fff; padding: 7px 14px;
+    margin: 4px 0 16px; border-radius: 2px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  }
+  .ns-status-text { font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 600; }
+  .ns-stars { color: #f0d177; display: flex; gap: 2px; filter: drop-shadow(0 0 2px rgba(240,209,119,0.4)); }
+  .ns-stars svg { width: 10px; height: 10px; }
+
+  /* ══════ INFO ══════ */
+  .ns-brand {
+    font-size:9px; letter-spacing:.42em; text-transform:uppercase;
+    margin-bottom:8px; font-weight: 600;
+    background: linear-gradient(90deg, #8a6508, #b8860b, #f0d177, #b8860b, #8a6508);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: ns-brand-shimmer 6s linear infinite;
+  }
+  @keyframes ns-brand-shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+  .ns-title {
+    font-family:var(--font-heading-family,'Playfair Display',serif);
+    font-size:30px; font-weight:400; margin-bottom:14px;
+    letter-spacing:0.06em; line-height:1.1; text-transform: uppercase;
+    color: #0a0a0a;
+  }
+
+  /* ══════ PRICE ══════ */
+  .ns-price-wrap {
+    margin: 0 0 20px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; padding: 14px 0;
+    border-top: 1px solid rgba(184,134,11,0.18);
+    border-bottom: 1px solid rgba(184,134,11,0.18);
+    position: relative;
+  }
+  .ns-price-wrap::before, .ns-price-wrap::after {
+    content: "";
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, #b8860b 50%, transparent);
+    opacity: 0.3;
+  }
+  .ns-price-wrap::before { top: -1px; }
+  .ns-price-wrap::after { bottom: -1px; }
+
+  .ns-price-current {
+    font-family: var(--font-heading-family, 'Playfair Display', 'Didot', 'Bodoni 72', serif);
+    font-size: 32px; font-weight: 400; color: #0a0a0a;
+    letter-spacing: 0.01em; line-height: 1;
+    font-feature-settings: "lnum" 1, "kern" 1;
+  }
+  .ns-price-currency {
+    font-family: var(--font-body-family, 'Helvetica Neue', sans-serif);
+    font-size: 10px; font-weight: 500; color: #999;
+    margin-left: 6px; letter-spacing: 0.25em; text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  .ns-price-compare {
+    font-family: var(--font-heading-family, 'Playfair Display', 'Didot', serif);
+    font-size: 19px; font-weight: 400; font-style: uppercase;
+    position: relative; display: inline-block; color: #8a8a8a; padding: 2px 4px; line-height: 1;
+    letter-spacing: 0.02em;
+    background: linear-gradient(90deg,#999 0%,#b8860b 35%,#f0d177 50%,#b8860b 65%,#999 100%);
+    background-size: 250% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; animation: ns-compare-shimmer 3s linear infinite;
+  }
+  @keyframes ns-compare-shimmer { 0% { background-position: 200% center; } 100% { background-position: -100% center; } }
+  .ns-price-compare::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; transform: translateY(-50%);
+    background: linear-gradient(90deg,transparent 0%,#b8860b 15%,#f0d177 50%,#b8860b 85%,transparent 100%);
+    background-size: 200% 100%; animation: ns-strike-sweep 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    box-shadow: 0 0 8px rgba(212,175,55,.5); pointer-events: none; z-index: 2;
+  }
+  @keyframes ns-strike-sweep { 0% { background-position: 200% center; } 100% { background-position: -100% center; } }
+
+  /* ══════ SWATCHES ══════ */
+  .ns-option-group { margin-bottom: 18px; }
+  .ns-option-label {
+    font-size:9px; letter-spacing:.32em; text-transform:uppercase;
+    color:#555; margin-bottom:10px; font-weight: 600;
+  }
+  .ns-swatches { display:flex; flex-wrap:wrap; gap:7px; }
+  .ns-swatch {
+    min-width:50px; height:40px; padding:0 16px; display:flex; align-items:center; justify-content:center;
+    border:1px solid #d8d4ca; background:#fff; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    cursor:pointer; transition:all .3s cubic-bezier(0.19, 1, 0.22, 1);
+    font-weight: 500; color: #2a2a2a;
+  }
+  .ns-swatch:hover { border-color:#b8860b; color:#b8860b; transform: translateY(-1px); }
+  .ns-swatch.selected {
+    background:#0a0a0a; color:#fff; border-color:#0a0a0a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  }
+
+  /* ══════ TRUST ══════ */
+  .ns-trust {
+    display:flex; justify-content:center; gap:20px; padding:14px;
+    border:1px solid rgba(184,134,11,0.15);
+    background: linear-gradient(180deg, rgba(250,248,243,0.6), rgba(255,255,255,0.4));
+    margin: 6px 0 18px;
+  }
+  .ns-trust-item { display:flex; align-items:center; gap:7px; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#555; font-weight: 500; }
+  .ns-trust-item svg { width:13px; height:13px; color:#b8860b; }
+
+  /* ══════ STICKY CTA ══════ */
+  .ns-sticky-cta {
+    position:fixed; bottom:0; left:0; right:0; z-index:100;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(20px) saturate(1.6);
+    -webkit-backdrop-filter:blur(20px) saturate(1.6);
+    border-top:1px solid rgba(184,134,11,0.15);
+    padding:12px 14px;
+    padding-bottom:max(12px, env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.06);
+  }
+  .ns-add-btn {
+    width:100%; height:52px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+    background-size: 200% auto;
+    color:#fff; border:none;
+    font-size:11px; letter-spacing:.32em; text-transform:uppercase; font-weight: 600;
+    cursor:pointer; transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    position: relative; overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .ns-add-btn:hover {
+    background-position: right center;
+    box-shadow: 0 8px 28px rgba(184,134,11,0.25), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .ns-add-btn::before {
+    content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(240,209,119,0.25), transparent);
+    transition: left 0.7s ease;
+  }
+  .ns-add-btn:hover::before { left: 100%; }
+
+  /* ══════ DESCRIPTION ══════ */
+  .ns-desc-wrap { margin-top: 36px; padding: 0 4px; }
+  .ns-desc-label {
+    font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
+    color: #b8860b; margin-bottom: 16px; display: block;
+    border-bottom: 1px solid rgba(184,134,11,0.2); padding-bottom: 10px;
+    font-weight: 600;
+  }
+  .ns-description { font-size: 14px; line-height: 1.8; color: #2a2a2a; font-weight: 300; }
+  .ns-description > p:first-child::first-letter {
+    font-family: var(--font-heading-family, serif); font-size: 44px;
+    float: left; line-height: 0.85; padding: 6px 10px 0 0;
+    color: #b8860b; font-weight: 400;
+  }
+  .ns-desc-footer {
+    margin-top: 24px; font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: #888;
+    display: flex; align-items: center; gap: 16px; font-weight: 500;
+  }
+  .ns-desc-footer::before {
+    content: ""; height: 1px; flex: 1;
+    background: linear-gradient(90deg, transparent, rgba(184,134,11,0.3), transparent);
+  }
+
+  @media (min-width:750px) {
+    .ns-pdp-inner { padding:54px 40px; }
+    .ns-grid { grid-template-columns: 1.1fr 0.9fr; gap:60px; }
+    .ns-title { font-size:40px; }
+    .ns-price-current { font-size: 38px; }
+    .ns-price-compare { font-size: 22px; }
+    .ns-sticky-cta { position:relative; background:transparent; padding:0; border:none; box-shadow: none; }
+    .ns-gallery-item:hover img { transform: scale(1.06); }
+    .ns-gallery-slider { flex-direction: column; overflow: visible; gap: 36px; }
+    .ns-gallery-pagination,
+    .ns-swipe-hint { display: none; }
+    .ns-gallery-container { overflow: visible; background: transparent; box-shadow: none; }
+    .ns-gallery-item { background: #faf8f3; }
+  }
+{% endstyle %}
+
+<section class="ns-pdp">
+  <div class="ns-pdp-inner">
+
+    <a href="{{ collection.url | default: '/collections/all' }}" class="ns-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Collection
+    </a>
+
+    <div class="ns-grid">
+
+      {%- comment -%} ══════ LUXURY IMMERSIVE GALLERY ══════ {%- endcomment -%}
+      <div class="ns-gallery-wrap">
+        <div class="ns-gallery-container">
+
+          <div class="ns-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" stroke-linejoin="round"/>
+            </svg>
+            Diamond Tester Certified
+          </div>
+
+          {% if product.images.size > 1 %}
+            <div class="ns-swipe-hint">
+              Swipe
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          {% endif %}
+
+          <div class="ns-gallery-slider" id="ns-gallery-slider">
+            {% for image in product.images %}
+              <div class="ns-gallery-item" data-index="{{ forloop.index0 }}">
+                {{ image | image_url: width: 1400 | image_tag: alt: product.title, loading: 'lazy' }}
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if product.images.size > 1 %}
+            <div class="ns-gallery-pagination" id="ns-gallery-pagination">
+              {% for image in product.images %}
+                <button
+                  type="button"
+                  class="ns-pagination-dot {% if forloop.first %}active{% endif %}"
+                  data-index="{{ forloop.index0 }}"
+                  aria-label="View image {{ forloop.index }}"
+                ></button>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+      {%- comment -%} ══════ INFO ══════ {%- endcomment -%}
+      <div class="ns-info">
+
+        <div class="ns-status-badge">
+          <div class="ns-stars">
+            {% for i in (1..5) %}
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            {% endfor %}
+          </div>
+          <span class="ns-status-text">Customer Favorite</span>
+        </div>
+
+        <div class="ns-brand">Northstone Jewelry</div>
+        <h1 class="ns-title">{{ product.title }}</h1>
+
+        <div class="ns-price-wrap">
+          <div class="ns-price-current">
+            {{ current_variant.price | money }}<span class="ns-price-currency">{{ cart.currency.iso_code }}</span>
+          </div>
+          <span class="ns-price-compare">{{ luxury_msrp | money }}</span>
+        </div>
+
+        {%- form 'product', product, id: 'ns-form' -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+          {% for option in product.options_with_values %}
+            <div class="ns-option-group" data-option-index="{{ forloop.index0 }}">
+              <div class="ns-option-label">{{ option.name }}</div>
+              <div class="ns-swatches">
+                {% for value in option.values %}
+                  <div class="ns-swatch {% if option.selected_value == value %}selected{% endif %}" data-value="{{ value }}">{{ value }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+
+          <div class="ns-trust">
+            <div class="ns-trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Tarnish Free
+            </div>
+            <div class="ns-trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Hypoallergenic
+            </div>
+          </div>
+
+          <div class="ns-sticky-cta">
+            <button type="submit" name="add" class="ns-add-btn">Add to Bag</button>
+          </div>
+
+        {%- endform -%}
+
+        <div class="ns-desc-wrap">
+          <span class="ns-desc-label">The Curator's Note</span>
+          <div class="ns-description">
+            {%- liquid
+              assign main_desc = product.description | split: 'Specifications' | first
+            -%}
+            {{ main_desc }}
+          </div>
+          <div class="ns-desc-footer">Individually Hand-Finished</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const slider = document.getElementById('ns-gallery-slider');
+    const pagination = document.getElementById('ns-gallery-pagination');
+    if (!slider || !pagination) return;
+
+    const dots = pagination.querySelectorAll('.ns-pagination-dot');
+    const items = slider.querySelectorAll('.ns-gallery-item');
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const index = parseInt(dot.dataset.index, 10);
+        const target = items[index];
+        if (target) {
+          slider.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });
+        }
+      });
+    });
+
+    let ticking = false;
+    slider.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const sliderWidth = slider.clientWidth;
+          const activeIndex = Math.round(slider.scrollLeft / sliderWidth);
+          dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === activeIndex);
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  })();
+
+  (function() {
+    const variantData = {{ product.variants | json }};
+    const form = document.getElementById('ns-form');
+    if (!form) return;
+    const variantInput = form.querySelector('input[name="id"]');
+    if (!variantInput) return;
+
+    const optionGroups = Array.from(form.querySelectorAll('.ns-option-group'));
+    const selectedOptions = optionGroups.map(group => {
+      const selected = group.querySelector('.ns-swatch.selected');
+      return selected ? selected.dataset.value : null;
+    });
+
+    function findVariant() {
+      return variantData.find(v =>
+        selectedOptions.every((val, i) => v['option' + (i + 1)] === val)
+      );
+    }
+
+    optionGroups.forEach((group, groupIndex) => {
+      group.querySelectorAll('.ns-swatch').forEach(swatch => {
+        swatch.addEventListener('click', () => {
+          group.querySelectorAll('.ns-swatch').forEach(s => s.classList.remove('selected'));
+          swatch.classList.add('selected');
+          selectedOptions[groupIndex] = swatch.dataset.value;
+          const variant = findVariant();
+          if (variant) variantInput.value = variant.id;
+        });
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Northstone Product",
+  "tag": "section",
+  "class": "section-northstone-product",
+  "settings": [],
+  "presets": [
+    { "name": "Northstone Product" }
+  ]
+}
+{% endschema %}
